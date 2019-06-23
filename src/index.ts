@@ -5,8 +5,7 @@ import * as bodyParser from "body-parser";
 import * as helmet from "helmet";
 import * as cors from "cors";
 import routes from "./routes";
-
-require('dotenv').config();
+import './config/env';
 
 createConnection().then(async connection => {
 
