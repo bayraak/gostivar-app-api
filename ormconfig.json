@@ -3,9 +3,8 @@
    "host": "localhost",
    "port": 5432,
    "username": "postgres",
-   "password": "Google95!",
-   "database": "postgres",
-   "schema": "gostivar-app-dev",
+   "password": "postgres",
+   "database": "gostivar-app-local",
    "synchronize": true,
    "logging": false,
    "entities": [
