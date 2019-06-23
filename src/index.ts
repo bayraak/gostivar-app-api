@@ -6,9 +6,10 @@ import * as helmet from "helmet";
 import * as cors from "cors";
 import routes from "./routes";
 
+require('dotenv').config();
+
 createConnection().then(async connection => {
 
-    // create express app
     const app = express();
     app.use(cors());
     app.use(helmet());

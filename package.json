@@ -17,6 +17,7 @@
       "body-parser": "^1.18.1",
       "class-validator": "^0.9.1",
       "cors": "^2.8.5",
+      "dotenv": "^8.0.0",
       "express": "^4.15.4",
       "helmet": "^3.18.0",
       "jsonwebtoken": "^8.5.1",
@@ -27,8 +28,8 @@
    },
    "scripts": {
       "tsc": "tsc",
-      "start": "set debug=* && ts-node-dev --respawn --transpileOnly ./src/index.ts",
-      "prod": "tsc && node ./build/app.js",
+      "start": "ts-node-dev --respawn --transpileOnly ./src/index.ts",
+      "prod": "tsc && node ./build/index.js",
       "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run"
    }
 }

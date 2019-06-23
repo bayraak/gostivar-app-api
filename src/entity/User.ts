@@ -28,6 +28,10 @@ export class User {
     lastName: string;
 
     @Column()
+    @Length(2, 20)
+    email: string;
+
+    @Column()
     @Length(4, 100)
     password: string;
 
