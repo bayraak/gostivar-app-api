@@ -5,8 +5,9 @@ import { checkRole } from "../middlewares/checkRole";
 
 const router = Router();
 
-//Login
 router.post("/login", [], AuthController.login);
 router.post("/register", [], AuthController.register);
+router.post("/forgotpassword", [], AuthController.forgotPassword);
+router.get("/resetpassword", [], AuthController.resetPassword);
 
 export default router;
