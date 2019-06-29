@@ -4,10 +4,13 @@ import {
     Column,
     Unique,
     CreateDateColumn,
-    UpdateDateColumn
+    UpdateDateColumn,
+    OneToMany
 } from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
+import {Exclude} from "class-transformer";
+import { ResetPasswordToken } from "./ResetPasswordToken";
 
 @Entity()
 @Unique(["username"])
@@ -33,11 +36,15 @@ export class User {
 
     @Column()
     @Length(4, 100)
+    @Exclude()
     password: string;
 
     @Column()
     @IsNotEmpty()
     role: string;
+
+    @OneToMany(type => ResetPasswordToken, token => token.user)
+    resetPasswordTokens: ResetPasswordToken[];
 
     @Column()
     @CreateDateColumn()

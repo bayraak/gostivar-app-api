@@ -14,7 +14,7 @@ createConnection().then(async connection => {
     app.use(helmet());
     app.use(bodyParser.json());
 
-    app.use("/", routes);
+    app.use("/api", routes);
 
     app.listen(3000, () => {
         console.log("Server started on port 3000!");
