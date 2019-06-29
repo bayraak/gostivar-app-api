@@ -1,0 +1,108 @@
+paths:
+  /user/:                
+    get:                 
+      tags:             
+        - User            
+      summary: Get all users
+      produces:
+      - application/json
+      responses:         
+        200:
+          description: Returns list of UserDto
+    post:                 
+      tags:               
+        - User           
+      summary: Creates a new user
+      produces:
+      - application/json
+      parameters:         
+      - in: body          
+        name: sign up    
+        description: It enables a user to create an account
+        required: false   
+        schema:          
+          $ref: '#/definitions/createUserDto' 
+      responses:          
+        201:
+          description: An object with user details        
+        400:
+          description: Validation errors        
+        409:
+          description: The username is already in use        
+    
+  /user/{id}:          
+    get:                
+      tags:            
+        - User            
+      summary: Get user by given userId
+      produces:
+      - application/json
+      parameters:        
+      - in: path          
+        name: id
+        type: integer
+        required: true
+      responses:          
+        200:
+          description: Returns UserDto by given userId
+        404:
+          description: User not found by given userId
+    patch:                
+      tags:            
+        - User            
+      summary: Edit one user
+      produces:
+      - application/json
+      parameters:     
+      - name: id
+        in: path
+        required: true
+        type: string
+      - name: model
+        in: body
+        required: false
+        schema:
+          "$ref": "#/definitions/editUserDto"
+      responses:          
+        204:
+          description: No content, but accepted response
+        400:
+          description: Validation errors        
+        404:
+          description: User not found by given userId     
+        409:
+          description: The username is already in use 
+    delete:                
+      tags:            
+        - User            
+      summary: Delete one user
+      produces:
+      - application/json
+      parameters:        
+      - in: path          
+        name: id
+        type: integer
+        required: true
+      responses:          
+        204:
+          description: No content, but accepted response
+        404:
+          description: User not found by given userId     
+
+definitions:      
+  createUserDto:
+    type: object
+    properties:
+      username:
+        type: string
+      role:
+        type: string
+      password:
+        type: string
+  editUserDto:
+    type: object
+    properties:
+      username:
+        type: string
+      role:
+        type: string
