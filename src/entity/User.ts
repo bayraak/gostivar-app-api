@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
+import {Exclude} from "class-transformer";
 
 @Entity()
 @Unique(["username"])
@@ -33,6 +34,7 @@ export class User {
 
     @Column()
     @Length(4, 100)
+    @Exclude()
     password: string;
 
     @Column()
