@@ -104,7 +104,7 @@ class AuthController {
         const resetPasswordRepository = getRepository(ResetPasswordToken);
         try {
             await resetPasswordRepository.save(resetPasswordToken);
-            MailSender.sendResetPassword(user.email, token);
+            await MailSender.sendResetPassword(user.email, token);
             return res.status(200).send();
         } catch (e) {
             console.log(e);
@@ -151,7 +151,7 @@ class AuthController {
 
                 try {
                     await userRepository.update(userId, {password: user.password});
-                    MailSender.sendNewPassword(user.email, password);
+                    await MailSender.sendNewPassword(user.email, password);
                     res.status(200).send();
                 } catch (err) {
                     return res.status(400).send({err: 'Error occured'});
