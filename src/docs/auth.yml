@@ -1,0 +1,112 @@
+paths:
+  /auth/login:                
+    post:                 
+      tags:             
+        - Auth            
+      summary: Login
+      produces:
+      - application/json
+      parameters:         
+      - in: body          
+        name: Login Request
+        description: It enables a user to login
+        required: false   
+        schema:          
+          $ref: '#/definitions/LoginRequestDTO'
+      responses:          
+        200:
+          description: Returns logged in user       
+        401:
+          description: Wrong credentials      
+        500:
+          description: Server error
+  
+  /auth/register:                
+    post:                 
+      tags:             
+        - Auth            
+      summary: Register
+      produces:
+      - application/json
+      parameters:         
+      - in: body          
+        name: Register Request   
+        description: It enables a user to register
+        required: false   
+        schema:          
+          $ref: '#/definitions/RegisterRequestDTO'
+      responses:          
+        200:
+          description: Returns newly created user     
+        400:
+          description: Email exists     
+        500:
+          description: Server error
+          
+  /auth/forgotpassword:                
+    post:                 
+      tags:             
+        - Auth            
+      summary: Forgot Password
+      produces:
+      - application/json
+      parameters:         
+      - in: body          
+        name: Forgot Password Request   
+        description: Sends user email with link to change password
+        required: false   
+        schema:          
+          $ref: '#/definitions/ForgotPasswordRequestDTO'
+      responses:          
+        200:
+          description: Successfully sent email 
+        400:
+          description: Email address is not registered  
+        500:
+          description: Server error
+          
+  /auth/resetpassword:                
+    get:                 
+      tags:             
+        - Auth            
+      summary: Reset Password
+      produces:
+      - application/json
+      parameters:         
+      - in: path
+        type: string
+        name: Token   
+        required: true
+        description: Resets users password and sends new password via email
+      responses:          
+        200:
+          description: Successfully changed password
+        400:
+          description: Token already used, Token expired
+        500:
+          description: Server error 
+
+definitions:      
+  LoginRequestDTO:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+  RegisterRequestDTO:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+  ForgotPasswordRequestDTO:
+    type: object
+    properties:
+      email:
+        type: string
