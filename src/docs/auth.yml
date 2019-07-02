@@ -1,0 +1,104 @@
+paths:
+  /auth/login/:                
+    post:                 
+      tags:               
+        - Auth           
+      summary: Login
+      produces:
+      - application/json
+      parameters:         
+      - in: body          
+        name: login   
+        description: login dto
+        required: false   
+        schema:          
+          $ref: '#/definitions/loginDto' 
+      responses:          
+        200:
+          description: An object with user details        
+        400:
+          description: Validation errors        
+        401:
+          description: Wrong username or password       
+    
+  /auth/register/:          
+    post:                
+      tags:            
+        - Auth            
+      summary: Register as new user
+      produces:
+      - application/json
+      parameters:         
+      - in: body          
+        name: register
+        description: register dto
+        required: false   
+        schema:          
+          $ref: '#/definitions/registerDto' 
+      responses:          
+        201:
+          description: Returns new created user info
+        400:
+          description: Validation errors
+  /auth/forgotpassword/:
+    post:                
+      tags:            
+        - Auth            
+      summary: Retrieve forgotten password
+      produces:
+      - application/json
+      parameters:     
+      - name: model
+        in: body
+        required: false
+        schema:
+          "$ref": "#/definitions/forgotPasswordDto"
+      responses:          
+        200:
+          description: No content, but accepted response
+        400:
+          description: Validation errors        
+        404:
+          description: User not found by given email
+  /auth/resetpassword/:
+    get:                
+      tags:            
+        - Auth            
+      summary: Reset password
+      produces:
+      - application/json
+      parameters:     
+      - name: token
+        in: query
+        type: string
+        required: true
+      responses:          
+        200:
+          description: New password sent to user email
+        400:
+          description: Validation errors
+
+definitions:      
+  loginDto:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+  registerDto:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+  forgotPasswordDto:
+    type: object
+    properties:
+      email:
+        type: string

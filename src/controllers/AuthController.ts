@@ -70,7 +70,7 @@ class AuthController {
         try {
             await userRepository.save(user);
         } catch (e) {
-            return res.status(400).send({err: 'Error occured.'});
+            return res.status(400).send({err: 'Error occurred.'});
         }
 
         const createdUser = plainToClass(User, user);
@@ -88,7 +88,7 @@ class AuthController {
         try {
             user = await userRepository.findOneOrFail({where: {email}});
         } catch (err) {
-            return res.status(400).send({err: 'Email address is not registered'});
+            return res.status(404).send({err: 'Email address is not registered'});
         }
 
         const token = jwt.sign(
@@ -108,7 +108,7 @@ class AuthController {
             return res.status(200).send();
         } catch (e) {
             console.log(e);
-            return res.status(400).send({err: 'Error occured'});
+            return res.status(400).send({err: 'Error occurred'});
         }
     }
 
@@ -140,7 +140,7 @@ class AuthController {
             try {
                 await resetPasswordRepository.update(resetPasswordToken.id, {status: 1});
             } catch (err) {
-                return res.status(400).send({err: 'Error occured'});
+                return res.status(400).send({err: 'Error occurred'});
             }
 
             try {
@@ -154,7 +154,7 @@ class AuthController {
                     MailSender.sendNewPassword(user.email, password);
                     res.status(200).send();
                 } catch (err) {
-                    return res.status(400).send({err: 'Error occured'});
+                    return res.status(400).send({err: 'Error occurred'});
                 }
                 
             } catch (err) {
