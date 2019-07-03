@@ -1,92 +1,100 @@
 paths:
-  /auth/login/:                
+  /auth/login:                
     post:                 
-      tags:               
-        - Auth           
+      tags:             
+        - Auth            
       summary: Login
       produces:
       - application/json
       parameters:         
       - in: body          
-        name: login   
-        description: login dto
+        name: Login Request
+        description: It enables a user to login
         required: false   
         schema:          
-          $ref: '#/definitions/loginDto' 
+          $ref: '#/definitions/LoginRequestDTO'
       responses:          
         200:
-          description: An object with user details        
-        400:
-          description: Validation errors        
+          description: Returns logged in user       
         401:
-          description: Wrong username or password       
-    
-  /auth/register/:          
-    post:                
-      tags:            
+          description: Wrong credentials      
+        500:
+          description: Server error
+  
+  /auth/register:                
+    post:                 
+      tags:             
         - Auth            
-      summary: Register as new user
+      summary: Register
       produces:
       - application/json
       parameters:         
       - in: body          
-        name: register
-        description: register dto
+        name: Register Request   
+        description: It enables a user to register
         required: false   
         schema:          
-          $ref: '#/definitions/registerDto' 
-      responses:          
-        201:
-          description: Returns new created user info
-        400:
-          description: Validation errors
-  /auth/forgotpassword/:
-    post:                
-      tags:            
-        - Auth            
-      summary: Retrieve forgotten password
-      produces:
-      - application/json
-      parameters:     
-      - name: model
-        in: body
-        required: false
-        schema:
-          "$ref": "#/definitions/forgotPasswordDto"
+          $ref: '#/definitions/RegisterRequestDTO'
       responses:          
         200:
-          description: No content, but accepted response
+          description: Returns newly created user     
         400:
-          description: Validation errors        
-        404:
-          description: User not found by given email
-  /auth/resetpassword/:
-    get:                
-      tags:            
+          description: Email exists     
+        500:
+          description: Server error
+          
+  /auth/forgotpassword:                
+    post:                 
+      tags:             
         - Auth            
-      summary: Reset password
+      summary: Forgot Password
       produces:
       - application/json
-      parameters:     
-      - name: token
-        in: query
+      parameters:         
+      - in: body          
+        name: Forgot Password Request   
+        description: Sends user email with link to change password
+        required: false   
+        schema:          
+          $ref: '#/definitions/ForgotPasswordRequestDTO'
+      responses:          
+        200:
+          description: Successfully sent email 
+        400:
+          description: Email address is not registered  
+        500:
+          description: Server error
+          
+  /auth/resetpassword:                
+    get:                 
+      tags:             
+        - Auth            
+      summary: Reset Password
+      produces:
+      - application/json
+      parameters:         
+      - in: path
         type: string
+        name: Token   
         required: true
+        description: Resets users password and sends new password via email
       responses:          
         200:
-          description: New password sent to user email
+          description: Successfully changed password
         400:
-          description: Validation errors
+          description: Token already used, Token expired
+        500:
+          description: Server error 
 
 definitions:      
-  loginDto:
+  LoginRequestDTO:
     type: object
     properties:
       email:
         type: string
       password:
         type: string
-  registerDto:
+  RegisterRequestDTO:
     type: object
     properties:
       email:
@@ -97,7 +105,7 @@ definitions:
         type: string
       lastName:
         type: string
-  forgotPasswordDto:
+  ForgotPasswordRequestDTO:
     type: object
     properties:
       email:
