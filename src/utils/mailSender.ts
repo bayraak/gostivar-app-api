@@ -22,9 +22,7 @@ export default class MailSender {
             html: '<p>Click <a href="http://localhost:3000/api/auth/resetpassword?token=' + link + '">here</a> to reset your password</p>'        
         };
 
-        const response = await transporter.sendMail(mailOptions);
-        const url = nodemailer.getTestMessageUrl(response);
-        return;
+        return transporter.sendMail(mailOptions);
     }
 
     static sendNewPassword = async (email: string, password: string) => {
@@ -46,8 +44,6 @@ export default class MailSender {
             html: '<p>Your new password: ' + password + '</p>'        
         };
 
-        const response = await transporter.sendMail(mailOptions);
-        const url = nodemailer.getTestMessageUrl(response);
-        return;
+        return transporter.sendMail(mailOptions);
     }
 }
