@@ -9,6 +9,8 @@ import './config/env';
 import swaggerUi from 'swagger-ui-express';
 import { options } from './config/swagger.config';
 import swaggerDocs from 'swagger-jsdoc';
+import expressWinston from 'express-winston';
+import { loggerOptions, errorLoggerOptions } from './config/winston';
 
 createConnection().then(async connection => {
 
@@ -16,7 +18,9 @@ createConnection().then(async connection => {
     app.use(cors());
     app.use(helmet());
     app.use(bodyParser.json());
+    app.use(expressWinston.logger(loggerOptions));
     app.use("/api", routes);
+    app.use(expressWinston.errorLogger(errorLoggerOptions));
 
     if(process.env.NODE_ENV !== 'production') {
         const swaggerSpec = swaggerDocs(options);
