@@ -11,6 +11,14 @@ const swaggerDefinition = {
             "name": "GostivarApp license 2019"
         }
     },
+    "securityDefinitions": {
+        "bearerAuth": {
+            "name": "Authorization",
+            "in": "header",
+            "type": "apiKey",
+            "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+        }
+    },
     host: 'localhost:3000',
     basePath: '/api',
 };
