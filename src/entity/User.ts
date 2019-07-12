@@ -5,12 +5,14 @@ import {
     Unique,
     CreateDateColumn,
     UpdateDateColumn,
-    OneToMany
+    OneToMany,
+    ManyToOne
 } from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
 import {Exclude} from "class-transformer";
 import { ResetPasswordToken } from "./ResetPasswordToken";
+import { Role } from "./Role";
 
 @Entity()
 @Unique(["username"])
@@ -39,10 +41,6 @@ export class User {
     @Exclude()
     password: string;
 
-    @Column()
-    @IsNotEmpty()
-    role: string;
-
     @OneToMany(type => ResetPasswordToken, token => token.user)
     resetPasswordTokens: ResetPasswordToken[];
 
@@ -53,6 +51,10 @@ export class User {
     @Column()
     @UpdateDateColumn()
     updatedAt: Date;
+
+    
+    @ManyToOne(type => Role, role => role.users)
+    role: Role;
 
     hashPassword() {
         this.password = bcrypt.hashSync(this.password, 8);

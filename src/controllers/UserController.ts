@@ -3,15 +3,14 @@ import { getRepository } from "typeorm";
 import { validate } from "class-validator";
 
 import { User } from "../entity/User";
+import { plainToClass } from "class-transformer";
 
 class UserController {
 
     static listAll = async (req: Request, res: Response) => {
         //Get users from database
         const userRepository = getRepository(User);
-        const users = await userRepository.find({
-            select: ["id", "username", "role"] //We dont want to send the passwords on response
-        });
+        const users = await userRepository.find();
 
         //Send the users object
         res.send(users);
@@ -24,9 +23,9 @@ class UserController {
         //Get the user from database
         const userRepository = getRepository(User);
         try {
-            const user = await userRepository.findOneOrFail(id, {
-                select: ["id", "username", "role"] //We dont want to send the password on response
-            });
+            const user = await userRepository.findOneOrFail(id, {relations: ["role"]});
+            const userDTO = plainToClass(User, user);
+            return res.send(userDTO);
         } catch (error) {
             res.status(404).send("User not found");
         }
