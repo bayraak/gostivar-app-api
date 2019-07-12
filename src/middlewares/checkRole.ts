@@ -12,13 +12,13 @@ export const checkRole = (roles: Array<string>) => {
     const userRepository = getRepository(User);
     let user: User;
     try {
-      user = await userRepository.findOneOrFail(id);
+      user = await userRepository.findOneOrFail(id, {relations: ["role"]});
     } catch (id) {
       res.status(401).send();
     }
 
     //Check if array of authorized roles includes the user's role
-    if (roles.indexOf(user.role) > -1) next();
+    if (roles.indexOf(user.role.role) > -1) next();
     else res.status(401).send();
   };
 };
