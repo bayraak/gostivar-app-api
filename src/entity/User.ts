@@ -13,6 +13,7 @@ import * as bcrypt from "bcryptjs";
 import {Exclude} from "class-transformer";
 import { ResetPasswordToken } from "./ResetPasswordToken";
 import { Role } from "./Role";
+import { Post } from "./Post";
 
 @Entity()
 @Unique(["username"])
@@ -43,6 +44,9 @@ export class User {
 
     @OneToMany(type => ResetPasswordToken, token => token.user)
     resetPasswordTokens: ResetPasswordToken[];
+
+    @OneToMany(type => Post, post => post.user)
+    posts: Post[];
 
     @Column()
     @CreateDateColumn()
