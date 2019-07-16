@@ -5,6 +5,7 @@ import {
     OneToMany
 } from "typeorm";
 import { User } from "./User";
+import { RoleToCategory } from "./RoleToCategory";
 
 @Entity()
 export class Role {
@@ -12,8 +13,11 @@ export class Role {
     id: number;
 
     @Column()
-    role: string;
+    name: string;
 
     @OneToMany(type => User, user => user.role)
     users: User[];
+
+    @OneToMany(type => RoleToCategory, roleToCategory => roleToCategory.role)
+    roleToCategories!: RoleToCategory[];
 }
