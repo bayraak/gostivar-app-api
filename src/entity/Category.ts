@@ -9,7 +9,7 @@ export class Category {
     id: number;
 
     @Column()
-    @Length(4, 20)
+    @Length(2, 20)
     name: string;
 
     @OneToMany(type => RoleToCategory, roleToCategory => roleToCategory.category)

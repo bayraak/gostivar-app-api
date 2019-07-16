@@ -9,7 +9,7 @@ import { Router } from "express";
   router.get("/", [], UserController.listAll);
 
   // Get one user
-  router.get("/:id([0-9]+)", [checkJwt, checkRole(["USER"])], UserController.getOneById);
+  router.get("/:id([0-9]+)", [checkJwt, checkRole(["USER", "ADMIN"])], UserController.getOneById);
 
   //Create a new user
   router.post("/", [checkJwt, checkRole(["ADMIN"])], UserController.newUser);
