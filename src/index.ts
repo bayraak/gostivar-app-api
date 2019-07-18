@@ -22,7 +22,7 @@ createConnection().then(async connection => {
     app.use("/api", routes);
     app.use(expressWinston.errorLogger(errorLoggerOptions));
 
-    if(process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production') {
         const swaggerSpec = swaggerDocs(options);
         app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
     }
