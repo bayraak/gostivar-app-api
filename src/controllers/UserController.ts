@@ -52,14 +52,14 @@ class UserController {
         //Try to save. If fails, the username is already in use
         const userRepository = getRepository(User);
         try {
-            await userRepository.save(user);
+            const savedUser = await userRepository.save(user);
+
+            //If all ok, send 201 response
+            return res.status(201).send(savedUser);
         } catch (e) {
             res.status(409).send("username already in use");
             return;
         }
-
-        //If all ok, send 201 response
-        res.status(201).send("User created");
     };
 
     static editUser = async (req: Request, res: Response) => {
