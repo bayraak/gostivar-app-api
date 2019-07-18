@@ -93,6 +93,12 @@ definitions:
   createUserDto:
     type: object
     properties:
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
       username:
         type: string
       role:
