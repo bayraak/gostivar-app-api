@@ -14,6 +14,7 @@ import {Exclude} from "class-transformer";
 import { ResetPasswordToken } from "./ResetPasswordToken";
 import { Role } from "./Role";
 import { Post } from "./Post";
+import { PostLikes } from "./PostLike";
 
 @Entity()
 @Unique(["username"])
@@ -47,6 +48,9 @@ export class User {
 
     @OneToMany(type => Post, post => post.user)
     posts: Post[];
+
+    @OneToMany(type => PostLikes, postLike => postLike.user)
+    likes: PostLikes[];
 
     @Column()
     @CreateDateColumn()

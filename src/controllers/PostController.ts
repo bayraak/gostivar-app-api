@@ -4,6 +4,7 @@ import { User } from "../entity/User";
 import {plainToClass} from "class-transformer";
 import { Post } from "../entity/Post";
 import { CreatePostDTO } from '../models/post';
+import { Category } from "../entity/Category";
 
 class PostController {
 
@@ -21,11 +22,14 @@ class PostController {
 
     static createPost = async (req: Request, res: Response) => {
         const token = res.locals.jwtPayload;
+        const categoryRepository = getRepository(Category);
         const userRepository = getRepository(User);
         const postRepository = getRepository(Post);
         const user = await userRepository.findOne(token.userId);
+        const category = await categoryRepository.findOne(1);
         let post = new Post();
         post.user = user;
+        post.category = category;
         post.content = 'Test';
         try {
             post = await postRepository.save(post);

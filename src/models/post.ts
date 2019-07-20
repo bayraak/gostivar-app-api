@@ -1,4 +1,5 @@
-import { Expose } from "class-transformer";
+import { Expose, Type } from "class-transformer";
+import { CategoryDTO } from "./category";
 
 export class CreatePostDTO {
     @Expose() id: string;
@@ -9,4 +10,5 @@ export class CreatePostDTO {
     @Expose() isCommentsEnabled: boolean;
     @Expose() createdAt: Date;
     @Expose() updatedAt: Date;
+    @Expose() @Type(() => CategoryDTO) category: CategoryDTO;
 }

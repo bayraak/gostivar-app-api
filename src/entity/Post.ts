@@ -5,13 +5,17 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     ManyToOne,
-    Generated
+    Generated,
+    OneToMany,
+    PrimaryColumn
 } from "typeorm";
 import { User } from "./User";
+import { Category } from "./Category";
+import { PostLikes } from "./PostLike";
 
 @Entity()
 export class Post {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     @Generated('uuid')
     id: string;
 
@@ -40,6 +44,12 @@ export class Post {
 
     @ManyToOne(type => User, user => user.posts)
     user: User;
+
+    @ManyToOne(type => Category, category => category.posts)
+    category: Category;
+
+    @OneToMany(type => PostLikes, postLike => postLike.user)
+    likes!: PostLikes[];
 
     @Column()
     @CreateDateColumn()

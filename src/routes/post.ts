@@ -7,7 +7,7 @@ const router = Router();
 
 //Get all posts
 router.get("/", [], PostController.getAllPosts);
-router.post("/", [checkJwt, checkRole(["USER"])], PostController.createPost);
+router.post("/", [checkJwt, checkRole(["USER", "ADMIN"])], PostController.createPost);
 
 
 export default router;
