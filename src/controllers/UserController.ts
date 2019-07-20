@@ -4,6 +4,7 @@ import { validate } from "class-validator";
 
 import { User } from "../entity/User";
 import { plainToClass } from "class-transformer";
+import { Role } from "../entity/Role";
 
 class UserController {
 
@@ -23,7 +24,7 @@ class UserController {
         //Get the user from database
         const userRepository = getRepository(User);
         try {
-            const user = await userRepository.findOneOrFail(id, {relations: ["role"]});
+            const user = await userRepository.findOneOrFail(id, { relations: ["role"] });
             const userDTO = plainToClass(User, user);
             return res.send(userDTO);
         } catch (error) {
@@ -33,11 +34,24 @@ class UserController {
 
     static newUser = async (req: Request, res: Response) => {
         //Get parameters from the body
-        let { username, password, role } = req.body;
+        let { firstName, lastName, email, username, password, role } = req.body;
+        const roleRepository = getRepository(Role);
+
+        let roleEntity: Role;
+        try {
+            roleEntity = await roleRepository.findOneOrFail({ where: { name: role } })
+        }
+        catch (error) {
+            return res.status(400).send(`Role not found. send proper role name. Details: ${error}`);
+        }
+
         let user = new User();
         user.username = username;
         user.password = password;
-        user.role = role;
+        user.role = roleEntity;
+        user.firstName = firstName;
+        user.lastName = lastName;
+        user.email = email;
 
         //Validade if the parameters are ok
         const errors = await validate(user);
@@ -55,9 +69,10 @@ class UserController {
             const savedUser = await userRepository.save(user);
 
             //If all ok, send 201 response
-            return res.status(201).send(savedUser);
+            const createdUser = plainToClass(User, savedUser);
+            return res.status(201).send(createdUser);
         } catch (e) {
-            res.status(409).send("username already in use");
+            res.status(409).send(`username already in use. Details: ${e}`);
             return;
         }
     };
@@ -68,6 +83,15 @@ class UserController {
 
         //Get values from the body
         const { username, role } = req.body;
+        const roleRepository = getRepository(Role);
+
+        let roleEntity: Role;
+        try {
+            roleEntity = await roleRepository.findOneOrFail({ where: { name: role } })
+        }
+        catch (error) {
+            return res.status(400).send(`Role not found. send proper role name. Details: ${error}`);
+        }
 
         //Try to find user on database
         const userRepository = getRepository(User);
@@ -82,7 +106,7 @@ class UserController {
 
         //Validate the new values on model
         user.username = username;
-        user.role = role;
+        user.role = roleEntity;
         const errors = await validate(user);
         if (errors.length > 0) {
             res.status(400).send(errors);
@@ -93,7 +117,7 @@ class UserController {
         try {
             await userRepository.save(user);
         } catch (e) {
-            res.status(409).send("username already in use");
+            res.status(409).send(`username already in use. Details: ${e}`);
             return;
         }
         //After all send a 204 (no content, but accepted) response
