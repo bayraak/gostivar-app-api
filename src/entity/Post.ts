@@ -15,8 +15,7 @@ import { PostLikes } from "./PostLike";
 
 @Entity()
 export class Post {
-    @PrimaryColumn()
-    @Generated('uuid')
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column()
