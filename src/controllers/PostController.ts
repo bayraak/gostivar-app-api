@@ -3,21 +3,21 @@ import { getRepository } from "typeorm";
 import { User } from "../entity/User";
 import {plainToClass} from "class-transformer";
 import { Post } from "../entity/Post";
-import { CreatePostDTO } from '../models/post';
+import { CreatePostDTO, PostDTO } from '../models/post';
 import { Category } from "../entity/Category";
 
 class PostController {
 
-    static getAllPosts = async (req: Request, res: Response) => {
+    static getPosts = async (req: Request, res: Response) => {
         const postRepository = getRepository(Post);
         let posts: Post[];
         try {
-            posts = await postRepository.find();
+            posts = await postRepository.find({relations: ['category', 'user']});
+            const postsDTO = plainToClass(PostDTO, posts, { excludeExtraneousValues: true });
+            return res.send(postsDTO);
         } catch (err) {
             return res.status(500).send({err: 'Error Occured'});
         }
-
-        res.send(posts);
     }
 
     static createPost = async (req: Request, res: Response) => {

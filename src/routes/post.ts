@@ -6,7 +6,7 @@ import { checkRole } from "../middlewares/checkRole";
 const router = Router();
 
 //Get all posts
-router.get("/", [], PostController.getAllPosts);
+router.get("/", [], PostController.getPosts);
 router.post("/", [checkJwt, checkRole(["USER", "ADMIN"])], PostController.createPost);
 
 
