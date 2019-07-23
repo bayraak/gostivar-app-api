@@ -67,24 +67,35 @@ class PostController {
 
     static getPostById = async (req: Request, res: Response) => {
         const postId: number = req.params.id;
-
+        const { userId } = res.locals.jwtPayload;
         if (!postId) {
             return res.status(500).send({err: 'postId is required'});
         }
 
         const postRepository = getRepository(Post);
         try {
-            const post = await postRepository.findOneOrFail(postId, {relations: ['category', 'user']});
+            const post= await postRepository
+                    .createQueryBuilder('post')
+                    .leftJoinAndSelect('post.category', 'category')
+                    .leftJoinAndSelect('post.user', 'user')
+                    .leftJoinAndSelect('post.likes', 'like', 'like.userId = :userId and like.postId = post.id', {userId})
+                    .where('post.id = :postId', {postId})
+                    .getOne();
+
+            if (!post) {
+                return res.status(404).send({err: `Post not found with id: ${postId}`});
+            }
+
+            // const post = await postRepository.findOneOrFail(postId, {relations: ['category', 'user']});
             const postDTO = plainToClass(PostDTO, post, {excludeExtraneousValues: true});
             return res.send(postDTO);
         } catch (error) {
-            return res.status(500).send({err: `Post not found with id: ${postId}`});
+            return res.status(500).send({err: 'Error occured'});
         }
     }
 
     static getPostLikes = async (req: Request, res: Response) => {
         const postId: number = req.params.id;
-        const { userId } = res.locals.jwtPayload;
 
         if (!postId) {
             return res.status(500).send({err: 'postId is required'});
@@ -92,7 +103,7 @@ class PostController {
 
         const postLikesRepository = getRepository(PostLikes);
         try {
-            const likes = await postLikesRepository.find({where: {postId}, relations: ['user']});
+            const likes = await postLikesRepository.find({where: {postId}, relations: ['user'], order: {createdAt: 'DESC'}});
             const likesDTO = plainToClass(LikeDTO, likes, {excludeExtraneousValues: true});
             return res.send(likesDTO);
         } catch (error) {
@@ -101,8 +112,8 @@ class PostController {
     }
 
     static toggleLike = async (req: Request, res: Response) => {
-        const token = res.locals.jwtPayload;
-        const postId: number = req.params.id;
+        const { userId } = res.locals.jwtPayload;
+        const postId: string = req.params.id;
 
         if (!postId) {
             return res.status(500).send({err: 'postId is required'});
@@ -110,14 +121,28 @@ class PostController {
 
         const userRepository = getRepository(User);
         const postRepository = getRepository(Post);
+        const postLikesRepository = getRepository(PostLikes);
 
-        const user = await userRepository.findOne(token.userId);
         try {
-            const post = await postRepository.findOneOrFail(1);
-            res.send(post);
+            const user = await userRepository.findOne(userId);
+            const post = await postRepository.findOne(postId);
+            if (!post) {
+                return res.status(404).send({err: `Post not found with id: ${postId}`});
+            }
 
-        } catch (error) {
-            return res.status(500).send({err: `Post not found with id: ${postId}`});
+            const like = await postLikesRepository.findOne({where: {userId, postId}});
+            if (like) {
+                await postLikesRepository.remove(like);
+            } else {
+                const newLike = new PostLikes();
+                newLike.postId = postId;
+                newLike.userId = userId;
+                await postLikesRepository.save(newLike);
+            }
+            return res.send();
+
+        } catch (err) {
+            return res.status(500).send({err: `Error occured`});
         }
     }
 
