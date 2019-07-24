@@ -43,7 +43,7 @@ class PostController {
 
         const errors = await validate(createPostRequest, {validationError: {target: false, value: false}});
         if (errors && errors.length > 0) {
-            return res.status(500).send(errors); 
+            return res.status(400).send(errors); 
         }
 
         const user = await userRepository.findOne(token.userId);
@@ -69,7 +69,7 @@ class PostController {
         const postId: number = req.params.id;
         const { userId } = res.locals.jwtPayload;
         if (!postId) {
-            return res.status(500).send({err: 'postId is required'});
+            return res.status(400).send({err: 'postId is required'});
         }
 
         const postRepository = getRepository(Post);
@@ -86,7 +86,6 @@ class PostController {
                 return res.status(404).send({err: `Post not found with id: ${postId}`});
             }
 
-            // const post = await postRepository.findOneOrFail(postId, {relations: ['category', 'user']});
             const postDTO = plainToClass(PostDTO, post, {excludeExtraneousValues: true});
             return res.send(postDTO);
         } catch (error) {
@@ -98,7 +97,7 @@ class PostController {
         const postId: number = req.params.id;
 
         if (!postId) {
-            return res.status(500).send({err: 'postId is required'});
+            return res.status(400).send({err: 'postId is required'});
         }
 
         const postLikesRepository = getRepository(PostLikes);
@@ -116,7 +115,7 @@ class PostController {
         const postId: string = req.params.id;
 
         if (!postId) {
-            return res.status(500).send({err: 'postId is required'});
+            return res.status(400).send({err: 'postId is required'});
         }
 
         const userRepository = getRepository(User);
@@ -124,7 +123,6 @@ class PostController {
         const postLikesRepository = getRepository(PostLikes);
 
         try {
-            const user = await userRepository.findOne(userId);
             const post = await postRepository.findOne(postId);
             if (!post) {
                 return res.status(404).send({err: `Post not found with id: ${postId}`});
