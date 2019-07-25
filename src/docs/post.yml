@@ -1,0 +1,175 @@
+paths:
+  /post:                
+    post:                 
+      tags:             
+        - Post            
+      summary: Create Post
+      produces:
+      - application/json
+      parameters:         
+      - in: body          
+        name: Create Post Request
+        description: Creates new post
+        required: false   
+        schema:          
+          $ref: '#/definitions/CreatePostRequest'
+      responses:          
+        200:
+          description: Returns newly created post       
+        500:
+          description: Server error
+    
+    get:
+      tags:
+        - Post
+      summary: Get All Posts
+      produces:
+      - application/json
+      responses:          
+        200:
+          description: Returns posts
+          schema:
+            $ref: '#/definitions/PostDTOArray'
+        500:
+          description: Server error
+          
+  /post/:id:                
+    get:                 
+      tags:             
+        - Post            
+      summary: Get Post By Id
+      produces:
+      - application/json
+      parameters:         
+      - in: path          
+        name: id
+        description: Post ID
+        type: string
+        required: true
+      responses:          
+        200:
+          description: Return single post
+          schema:
+            $ref: '#/definitions/PostDTO'
+        404:
+          description: Post not found
+        500:
+          description: Server error
+          
+  /post/:id/likes:                
+    get:                 
+      tags:             
+        - Post            
+      summary: Get Post Likes
+      produces:
+      - application/json
+      parameters:         
+      - in: path          
+        description: Post ID
+        name: id
+        type: string
+        required: true
+      responses:          
+        200:
+          description: Returns likes of given post
+          schema:
+            $ref: '#/definitions/LikesDTOArray'
+        404:
+          description: Post not found
+        500:
+          description: Server error
+          
+  /post/:id/toggleLike:                
+    get:                 
+      tags:             
+        - Post            
+      summary: Toggle Post Like
+      produces:
+      - application/json
+      parameters:         
+      - in: path          
+        name: id
+        type: string
+        required: true
+      responses:          
+        200:
+          description: Returns OK
+        404:
+          description: Post not found
+        500:
+          description: Server error
+
+definitions:      
+  CreatePostRequest:
+    type: object
+    properties:
+      content:
+        type: string
+      categoryId:
+        type: number
+      isCommentsEnabled:
+        type: boolean
+  PostDTOArray:
+    type: array
+    items:
+      $ref: '#/definitions/PostDTO'
+  PostDTO:
+    type: object
+    properties:
+      id: 
+        type: string
+      content: 
+        type: string
+      likeCount: 
+        type: number
+      commentsCount: 
+        type: number
+      isDeleted:
+        type: boolean
+      createdAt:
+        type: string
+      updatedAt:
+        type: string
+      isCommentsEnabled:
+        type: boolean
+      isLiked:
+        type: boolean
+      category:
+        $ref: '#/definitions/CategoryDTO'
+      user:
+        $ref: '#/definitions/UserDTO'
+      
+  CategoryDTO:
+    type: object
+    properties:
+      id:
+        type: number
+      name:
+        type: string
+  
+  UserDTO:
+    type: object
+    properties:
+      id:
+        type: number
+      firstName:
+        type: string
+      lastName:
+        type: string
+      email:
+        type: string
+      
+  LikesDTO:
+    type: object
+    properties:
+      userId:
+        type: number
+      postId:
+        type: string
+      user:
+        $ref: '#/definitions/UserDTO'
+        
+  LikesDTOArray:
+    type: array
+    items:
+      $ref: '#/definitions/LikesDTO'
