@@ -5,14 +5,17 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     ManyToOne,
-    Generated
+    OneToMany,
 } from "typeorm";
 import { User } from "./User";
+import { Category } from "./Category";
+import { PostLikes } from "./PostLike";
+import { PostComments } from "./PostComment";
+import { PostReport } from "./PostReport";
 
 @Entity()
 export class Post {
-    @PrimaryGeneratedColumn()
-    @Generated('uuid')
+    @PrimaryGeneratedColumn('uuid')
     id: string;
 
     @Column()
@@ -38,9 +41,6 @@ export class Post {
     })
     isCommentsEnabled: boolean;
 
-    @ManyToOne(type => User, user => user.posts)
-    user: User;
-
     @Column()
     @CreateDateColumn()
     createdAt: Date;
@@ -48,4 +48,19 @@ export class Post {
     @Column()
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @ManyToOne(type => User, user => user.posts)
+    user: User;
+
+    @ManyToOne(type => Category, category => category.posts)
+    category: Category;
+
+    @OneToMany(type => PostLikes, postLike => postLike.post)
+    likes!: PostLikes[];
+
+    @OneToMany(type => PostComments, postComment => postComment.post)
+    comments!: PostComments[];
+
+    @OneToMany(type => PostReport, postReport => postReport.post)
+    reports!: PostReport[];
 }
