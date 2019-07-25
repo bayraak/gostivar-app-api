@@ -1,7 +1,7 @@
 import winston from 'winston';
 
 const options = {
-  level: 'info',
+  level: 'error',
   filename: `logs/log.json`,
   handleExceptions: true,
   json: true,
