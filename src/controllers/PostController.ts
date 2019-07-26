@@ -106,7 +106,7 @@ class PostController {
             const likesDTO = plainToClass(LikeDTO, likes, {excludeExtraneousValues: true});
             return res.send(likesDTO);
         } catch (error) {
-            return res.status(500).send({err: `Post not found with id: ${postId}`});
+            return res.status(500).send({err: `Error occured`});
         }
     }
 

@@ -18,6 +18,12 @@ export class PostReport {
     @UpdateDateColumn()
     updatedAt: Date;
 
+    @Column()
+    userId: number;
+
+    @Column()
+    postId: string;
+
     @ManyToOne(type => User, user => user.reports)
     user!: User
 

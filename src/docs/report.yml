@@ -1,0 +1,110 @@
+paths:
+  /report:                
+    post:                 
+      tags:             
+        - Post Report            
+      summary: Create Report
+      produces:
+      - application/json
+      parameters:         
+      - in: body          
+        name: Create Report Request
+        description: Creates new post report
+        required: true   
+        schema:          
+          $ref: '#/definitions/CreateReportRequest'
+      responses:          
+        200:
+          description: Returns newly created report
+          schema:
+            $ref: '#/definitions/ReportDTO'
+        400:
+          description: PostId is required
+        404:
+          description: Post not found
+        500:
+          description: Server error
+    
+    get:
+      tags:
+        - Post Report
+      summary: Get Reports
+      parameters:         
+        - in: query
+          name: take
+          type: integer
+        - in: query
+          name: skip
+          type: integer
+        - in: query
+          name: userId
+          type: integer
+        - in: query
+          name: postId
+          type: string
+        - in: query
+          name: from
+          type: string
+        - in: query
+          name: to
+          type: string
+      produces:
+      - application/json
+      responses:          
+        200:
+          description: Returns reports
+          schema:
+            $ref: '#/definitions/ReportDTOArray'
+        500:
+          description: Server error
+          
+  /report/:id:                
+    get:                 
+      tags:             
+        - Post Report        
+      summary: Get Report By Id
+      produces:
+      - application/json
+      parameters:         
+      - in: path          
+        name: id
+        description: Report ID
+        type: string
+        required: true
+      responses:          
+        200:
+          description: Return single report
+          schema:
+            $ref: '#/definitions/ReportDTO'
+        404:
+          description: Report not found
+        500:
+          description: Server error
+
+definitions:          
+  ReportDTO:
+    type: object
+    properties:
+      id:
+        type: number
+      reason:
+        type: string
+      createdAt:
+        type: string
+      post:
+        $ref: '#/definitions/PostDTO'
+      user:
+        $ref: '#/definitions/UserDTO'
+        
+  ReportDTOArray:
+    type: array
+    items:
+      $ref: '#/definitions/ReportDTO'
+  
+  CreateReportRequest:
+    type: object
+    properties:
+      reason:
+        type: string
+      postId:
+        type: string
