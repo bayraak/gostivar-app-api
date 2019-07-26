@@ -2,6 +2,9 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { Category } from "../entity/Category";
 import { validate } from "class-validator";
+import { User } from "../entity/User";
+import { Role } from "../entity/Role";
+import { RoleToCategory } from "../entity/RoleToCategory";
 
 class CategoryController {
     static listAll = async (req: Request, res: Response) => {
@@ -30,13 +33,13 @@ class CategoryController {
         category.name = name;
 
         const errors = await validate(category);
-        if(errors.length > 0) {
+        if (errors.length > 0) {
             return res.status(400).send(errors);
         }
 
         const categoryRepository = getRepository(Category);
         try {
-            const savedCategory  = await categoryRepository.save(category);
+            const savedCategory = await categoryRepository.save(category);
             return res.status(201).send(savedCategory);
         }
         catch (error) {
@@ -60,7 +63,7 @@ class CategoryController {
         category.name = name;
 
         const errors = await validate(category);
-        if(errors.length > 0) {
+        if (errors.length > 0) {
             return res.status(400).send(errors);
         }
 
@@ -77,7 +80,7 @@ class CategoryController {
         const id = req.params.id;
 
         const categoryRepository = getRepository(Category);
-        
+
         try {
             await categoryRepository.findOneOrFail(id);
         }
@@ -93,6 +96,21 @@ class CategoryController {
             return res.status(500).send(error);
         }
     };
+
+    static getAvailableCategoriesForUser = async (req: Request, res: Response) => {
+        const id: number = req.params.id;
+        const userRepository = getRepository(User);
+        const roleToCategoryRepository = getRepository(RoleToCategory);
+
+        let categories: RoleToCategory[];
+        try {
+            const user = await userRepository.findOneOrFail({ where: { id: id }, relations: ['role'] });
+            categories = await roleToCategoryRepository.find({ where: { roleId: user.role.id }, relations: ['category'] })
+        } catch (err) {
+            return res.status(500).send('Error occurred');
+        }
+        return res.status(200).send(categories);
+    }
 }
 
 export default CategoryController;

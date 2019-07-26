@@ -15,4 +15,6 @@ router.put("/:id([0-9]+)", [checkJwt, checkRole(["ADMIN"])], CategoryController.
 
 router.delete("/:id([0-9]+)", [checkJwt, checkRole(["ADMIN"])], CategoryController.deleteCategory);
 
+router.get("/by-user/:id([0-9]+)", CategoryController.getAvailableCategoriesForUser);
+
 export default router;

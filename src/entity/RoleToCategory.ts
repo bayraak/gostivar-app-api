@@ -10,11 +10,9 @@ export class RoleToCategory {
     @PrimaryColumn() 
     categoryId: number;
 
-    @ManyToOne(type => Role, role => role.roleToCategories)
-    @JoinColumn({ name: "roleId" })
+    @ManyToOne(type => Role, role => role.categories)
     role!: Role
 
-    @ManyToOne(type => Category, category => category.roleToCategories)
-    @JoinColumn({ name: "categoryId" })
+    @ManyToOne(type => Category, category => category.roles)
     category!: Category
 }

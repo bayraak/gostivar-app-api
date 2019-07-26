@@ -14,7 +14,7 @@ export class Category {
     name: string;
 
     @OneToMany(type => RoleToCategory, roleToCategory => roleToCategory.category)
-    roleToCategories!: RoleToCategory[];
+    roles!: RoleToCategory[];
     
     @OneToMany(type => Post, post => post.category)
     posts: Post[];
