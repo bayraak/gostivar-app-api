@@ -34,14 +34,14 @@ class AuthController {
         const token = jwt.sign(
             { userId: user.id, username: user.username, email: user.email, role: user.role.name },
             config.jwtSecret,
-            { expiresIn: "24h" }
+            { expiresIn: "30d" }
         );
 
         const loginDto: LoginDTO = {
             userId: user.id,
             role: user.role.name,
             accessToken: token,
-            expiresIn: moment().add(1, 'day').unix()
+            expiresIn: moment().add(30, 'day').unix()
         };
 
         res.send(loginDto);
