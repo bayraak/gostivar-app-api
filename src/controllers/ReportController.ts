@@ -22,15 +22,19 @@ class ReportController {
         }
 
         const postReportPepository = getRepository(PostReport);
-        const reports = await postReportPepository.find({
-            relations: ['user', 'post'],
-            where: query,
-            order: {createdAt: 'DESC'},
-            take: reportFilterModel.take,
-            skip: reportFilterModel.skip
-        });
-        const reportsDTO = plainToClass(ReportDTO, reports, { excludeExtraneousValues: true });
-        res.send(reportsDTO);
+        try {
+            const reports = await postReportPepository.find({
+                relations: ['user', 'post'],
+                where: query,
+                order: {createdAt: 'DESC'},
+                take: reportFilterModel.take,
+                skip: reportFilterModel.skip
+            });
+            const reportsDTO = plainToClass(ReportDTO, reports, { excludeExtraneousValues: true });
+            return res.send(reportsDTO);
+        } catch(err) {
+            return res.status(500).send({err: `Error occured`});
+        }
     };
 
     static createReport = async (req: Request, res: Response) => {
