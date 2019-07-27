@@ -87,7 +87,24 @@ paths:
         204:
           description: No content, but accepted response
         404:
-          description: User not found by given userId     
+          description: User not found by given userId
+  /user/{id}/categories:          
+    get:                
+      tags:            
+        - User            
+      summary: Get available categories for user
+      produces:
+      - application/json
+      parameters:        
+      - in: path          
+        name: id
+        type: integer
+        required: true
+      responses:          
+        200:
+          description: Returns Categories by given userId
+        404:
+          description: Category not found by given userId     
 
 definitions:      
   createUserDto:

@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Unique } from "typeorm";
 import { Length } from "class-validator";
 import { RoleToCategory } from "./RoleToCategory";
 import { Post } from "./Post";
 
 
 @Entity()
+@Unique(["name"])
 export class Category {
     @PrimaryGeneratedColumn()
     id: number;

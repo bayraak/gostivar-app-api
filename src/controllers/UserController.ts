@@ -5,6 +5,7 @@ import { validate } from "class-validator";
 import { User } from "../entity/User";
 import { plainToClass } from "class-transformer";
 import { Role } from "../entity/Role";
+import { RoleToCategory } from "../entity/RoleToCategory";
 
 class UserController {
 
@@ -140,6 +141,21 @@ class UserController {
 
         //After all send a 204 (no content, but accepted) response
         res.status(204).send();
+    };
+
+    static getAvailableCategoriesForUser = async (req: Request, res: Response) => {
+        const id: number = req.params.id;
+        const userRepository = getRepository(User);
+        const roleToCategoryRepository = getRepository(RoleToCategory);
+
+        let categories: RoleToCategory[];
+        try {
+            const user = await userRepository.findOneOrFail({ where: { id: id }, relations: ['role'] });
+            categories = await roleToCategoryRepository.find({ where: { roleId: user.role.id }, relations: ['category'] })
+        } catch (err) {
+            return res.status(500).send(err);
+        }
+        return res.status(200).send(categories);
     };
 };
 
