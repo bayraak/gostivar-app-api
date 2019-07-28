@@ -1,14 +1,22 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
-import { Category } from "../entity/Category";
+import { getRepository, getConnection } from "typeorm";
 import { validate } from "class-validator";
+
+import { Category } from "../entity/Category";
+import { Role } from "../entity/Role";
+import { RoleToCategory } from "../entity/RoleToCategory";
+import { CreateCategoryDTO } from "../models/category";
 
 class CategoryController {
     static listAll = async (req: Request, res: Response) => {
         const categoryRepository = getRepository(Category);
         const categories = await categoryRepository.find();
 
-        res.send(categories);
+        if (categories.length > 0) {
+            return res.status(200).send(categories);
+        }
+
+        return res.status(404).send('Categories not found');
     };
 
     static getOneById = async (req: Request, res: Response) => {
@@ -25,31 +33,50 @@ class CategoryController {
     };
 
     static newCategory = async (req: Request, res: Response) => {
-        let { name } = req.body;
+        const createCategoryDto: CreateCategoryDTO = req.body;
+
         let category = new Category();
-        category.name = name;
+        category.name = createCategoryDto.categoryName;
 
         const errors = await validate(category);
-        if(errors.length > 0) {
+        if (errors.length > 0) {
             return res.status(400).send(errors);
         }
 
-        const categoryRepository = getRepository(Category);
+        const connection = getConnection();
+        const queryRunner = connection.createQueryRunner();
+
+        await queryRunner.startTransaction();
+        let savedCategory: Category;
         try {
-            const savedCategory  = await categoryRepository.save(category);
-            return res.status(201).send(savedCategory);
+            const roleRepository = getRepository(Role);
+            const role = await roleRepository.findOneOrFail({where: {name: createCategoryDto.role}});
+            
+            const categoryRepository = getRepository(Category);
+            savedCategory = await categoryRepository.save(category);
+            
+            const roleToCategoryRepository = getRepository(RoleToCategory);
+            const roleToCategory = new RoleToCategory();
+            roleToCategory.roleId = role.id;
+            roleToCategory.categoryId = category.id;
+            roleToCategoryRepository.save(roleToCategory)
         }
         catch (error) {
+            await queryRunner.rollbackTransaction();
             return res.status(500).send(error);
         }
-    }
+        finally {
+            await queryRunner.release();
+            return res.status(201).send(savedCategory);
+        }
+    };
 
     static editCategory = async (req: Request, res: Response) => {
         const id = req.params.id;
         const { name } = req.body;
 
         const categoryRepository = getRepository(Category);
-        let category;
+        let category: Category;
         try {
             category = await categoryRepository.findOneOrFail(id);
         }
@@ -57,10 +84,14 @@ class CategoryController {
             return res.status(404).send(`Category with id: ${id} not found`);
         }
 
+        if(category.name.toLowerCase() == name.toLowerCase()) {
+            return res.status(409).send(`No changes made. Category name is same: "${name}"`)
+        }
+
         category.name = name;
 
         const errors = await validate(category);
-        if(errors.length > 0) {
+        if (errors.length > 0) {
             return res.status(400).send(errors);
         }
 
@@ -77,7 +108,7 @@ class CategoryController {
         const id = req.params.id;
 
         const categoryRepository = getRepository(Category);
-        
+
         try {
             await categoryRepository.findOneOrFail(id);
         }

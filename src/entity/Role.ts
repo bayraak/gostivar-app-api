@@ -19,5 +19,5 @@ export class Role {
     users: User[];
 
     @OneToMany(type => RoleToCategory, roleToCategory => roleToCategory.role)
-    roleToCategories!: RoleToCategory[];
+    categories!: RoleToCategory[];
 }

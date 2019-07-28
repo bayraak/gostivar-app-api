@@ -28,4 +28,6 @@ import { Router } from "express";
     UserController.deleteUser
   );
 
+  router.get("/:id/categories/", UserController.getAvailableCategoriesForUser);
+
   export default router;

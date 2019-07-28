@@ -1,0 +1,107 @@
+paths:
+  /category/:                
+    get:                 
+      tags:             
+        - Category        
+      summary: Get all categories
+      produces:
+      - application/json
+      responses:         
+        200:
+          description: Returns list of Categories
+        404:
+          description: There are no categories in DB
+        401:
+          description: Unauthorized
+    post:                 
+      tags:               
+        - Category           
+      summary: Creates a new category
+      produces:
+      - application/json
+      parameters:         
+      - in: body          
+        name: CreateCategoryDTO   
+        description: Admin method for to create a new category
+        required: false   
+        schema:          
+          $ref: '#/definitions/CreateCategoryDTO' 
+      responses:          
+        201:
+          description: An object with category details        
+        400:
+          description: Validation errors        
+        409:
+          description: Category already exists      
+  /category/{id}:          
+    get:                
+      tags:            
+        - Category            
+      summary: Get category by categoryId
+      produces:
+      - application/json
+      parameters:        
+      - in: path          
+        name: id
+        type: integer
+        required: true
+      responses:          
+        200:
+          description: Returns list of categories
+        404:
+          description: Category not found
+    put:                
+      tags:            
+        - Category            
+      summary: Edit one category
+      produces:
+      - application/json
+      parameters:     
+      - name: id
+        in: path
+        required: true
+        type: string
+      - name: EditCategoryDTO
+        in: body
+        required: true
+        schema:
+          "$ref": "#/definitions/EditCategoryDTO"
+      responses:          
+        204:
+          description: Successfully updated
+        400:
+          description: Validation errors        
+        404:
+          description: Category not found by given categoryId    
+        409:
+          description: No changes made. Category name is same
+    delete:                
+      tags:            
+        - Category            
+      summary: Delete one category
+      produces:
+      - application/json
+      parameters:        
+      - in: path          
+        name: id
+        type: integer
+        required: true
+      responses:          
+        204:
+          description: No content, but accepted response
+        404:
+          description: Category not found by given categoryId     
+
+definitions:      
+  CreateCategoryDTO:
+    type: object
+    properties:
+      categoryName:
+        type: string
+      role:
+        type: string
+  EditCategoryDTO:
+    type: object
+    properties:
+      name:
+        type: string

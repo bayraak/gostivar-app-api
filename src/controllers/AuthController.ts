@@ -61,7 +61,13 @@ class AuthController {
         }
 
         const roleRepository = getRepository(Role);
-        const role = await roleRepository.findOne(2);
+        let role: Role;
+        try {
+            role = await roleRepository.findOneOrFail({ where: { name: 'USER' } });
+        }
+        catch (err) {
+            return res.status(500).send('Error occurred');
+        }
 
         user = new User();
         user.firstName = firstName;

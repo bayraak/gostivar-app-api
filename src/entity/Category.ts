@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Unique } from "typeorm";
 import { Length } from "class-validator";
 import { RoleToCategory } from "./RoleToCategory";
 import { Post } from "./Post";
 
 
 @Entity()
+@Unique(["name"])
 export class Category {
     @PrimaryGeneratedColumn()
     id: number;
@@ -14,7 +15,7 @@ export class Category {
     name: string;
 
     @OneToMany(type => RoleToCategory, roleToCategory => roleToCategory.category)
-    roleToCategories!: RoleToCategory[];
+    roles!: RoleToCategory[];
     
     @OneToMany(type => Post, post => post.category)
     posts: Post[];
