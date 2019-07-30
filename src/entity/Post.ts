@@ -49,6 +49,9 @@ export class Post {
     @UpdateDateColumn()
     updatedAt: Date;
 
+    @Column()
+    userId: number;
+
     @ManyToOne(type => User, user => user.posts)
     user: User;
 

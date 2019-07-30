@@ -1,13 +1,17 @@
-import { ManyToOne, Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { ManyToOne, Entity, Column, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./User";
 import { Post } from "./Post";
 
 @Entity()
 export class PostComments {
-    @PrimaryColumn() 
+
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+
+    @Column()
     postId: string;
 
-    @PrimaryColumn() 
+    @Column()
     userId: number;
     
     @Column()

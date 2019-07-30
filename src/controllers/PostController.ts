@@ -8,6 +8,8 @@ import { Category } from "../entity/Category";
 import { validate } from "class-validator";
 import { PostLikes } from "../entity/PostLike";
 import { LikeDTO } from "../models/likes";
+import { PostComments } from "../entity/PostComment";
+import { CreateCommentRequest, CommentDTO } from "../models/comments";
 
 class PostController {
 
@@ -138,6 +140,142 @@ class PostController {
                 await postLikesRepository.save(newLike);
             }
             return res.send();
+
+        } catch (err) {
+            return res.status(500).send({err: `Error occured`});
+        }
+    }
+
+    static getPostComments = async (req: Request, res: Response) => {
+        const postId: string = req.params.id;
+
+        if (!postId) {
+            return res.status(400).send({err: 'postId is required'});
+        }
+
+        const postCommentsRepository = getRepository(PostComments);
+
+        try {
+            const comments = await postCommentsRepository.find({
+                where: {postId, isDeleted: false},
+                relations: ['user', 'post'],
+                order: {createdAt: 'DESC'}
+            });
+            const commentsDTO = plainToClass(CommentDTO, comments, {excludeExtraneousValues: true});
+            return res.send(commentsDTO);
+
+        } catch (err) {
+            return res.status(500).send({err: `Error occured`});
+        }
+    }
+
+    static getCommentById = async (req: Request, res: Response) => {
+        const { userId } = res.locals.jwtPayload;
+        const commentId: string = req.params.commentId;
+        const postId: string = req.params.id;
+
+        if (!postId) {
+            return res.status(400).send({err: 'postId is required'});
+        }
+
+        if (!commentId) {
+            return res.status(400).send({err: 'commentId is required'});
+        }
+
+        const postCommentsRepository = getRepository(PostComments);
+        const postRepository = getRepository(Post);
+
+        try {
+
+            const post = await postRepository.findOne(postId);
+            if (!post) {
+                return res.status(404).send({err: `Post not found with id: ${postId}`});
+            }
+
+            const comment = await postCommentsRepository.findOne(commentId, {relations: ['user', 'post']});
+            if (!comment) {
+                return res.status(404).send({err: `Comment not found with id: ${commentId}`});
+            }
+
+            if (comment.user.id !== userId || comment.post.userId !== userId) {
+                return res.status(403).send();
+            }
+
+            comment.isDeleted = true;
+            await postCommentsRepository.save(comment);
+
+            const commentDTO = plainToClass(CommentDTO, comment, {excludeExtraneousValues: true});
+            return res.send(commentDTO);
+
+        } catch (err) {
+            return res.status(500).send({err: `Error occured`});
+        }
+    }
+
+    static deleteComment = async (req: Request, res: Response) => {
+        const commentId: string = req.params.commentId;
+
+        if (!commentId) {
+            return res.status(400).send({err: 'commentId is required'});
+        }
+
+        const postCommentsRepository = getRepository(PostComments);
+
+        try {
+            const comment = await postCommentsRepository.findOne({
+                where: {id: commentId},
+                relations: ['user', 'post'],
+            });
+            const commentDTO = plainToClass(CommentDTO, comment, {excludeExtraneousValues: true});
+            return res.send(commentDTO);
+
+        } catch (err) {
+            return res.status(500).send({err: `Error occured`});
+        }
+    }
+
+    static createComment = async (req: Request, res: Response) => {
+        const { userId } = res.locals.jwtPayload;
+        const postId: string = req.params.id;
+        const body = req.body;
+        const createCommentRequest = plainToClass(CreateCommentRequest, body, {excludeExtraneousValues: true});
+
+        if (!createCommentRequest.content) {
+            return res.status(400).send({err: 'Content is required'});
+        }
+
+        if (!postId) {
+            return res.status(400).send({err: 'postId is required'});
+        }
+
+        const userRepository = getRepository(User);
+        const postRepository = getRepository(Post);
+        const postCommentsRepository = getRepository(PostComments);
+
+        try {
+            const user = await userRepository.findOne(userId);
+            const post = await postRepository.findOne(postId);
+            if (!post) {
+                return res.status(404).send({err: `Post not found with id: ${postId}`});
+            }
+
+            if (!post.isCommentsEnabled) {
+                return res.status(403).send({err: `Comments are disabled for this post`});
+            }
+
+            let comment = new PostComments();
+            comment.content = createCommentRequest.content;
+            comment.post = post;
+            comment.postId = post.id;
+            comment.user = user;
+            await postCommentsRepository.save(comment);
+
+            post.commentCount += 1;
+            await postRepository.save(post);
+
+            const commentDTO = plainToClass(CommentDTO, comment, {excludeExtraneousValues: true});
+
+            return res.send(commentDTO);
 
         } catch (err) {
             return res.status(500).send({err: `Error occured`});
