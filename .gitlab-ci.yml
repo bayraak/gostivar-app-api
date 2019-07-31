@@ -3,7 +3,7 @@ image: node:latest
 stages:
   - development
   
-development:
+deploy:
   type: deploy
   stage: development
   image: ruby:latest
