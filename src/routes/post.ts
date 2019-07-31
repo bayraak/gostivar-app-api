@@ -30,7 +30,7 @@ router.get("/:id/comments", [checkJwt, checkRole(["USER", "ADMIN"])], PostContro
 router.get("/:id/comments/:commentId", [checkJwt, checkRole(["ADMIN"])], PostController.getCommentById);
 
 //Delete comment
-router.delete("/:id/comments/:commentId", [checkJwt, checkRole(["USER", "ADMIN"])], PostController.getCommentById);
+router.delete("/:id/comments/:commentId", [checkJwt, checkRole(["USER", "ADMIN"])], PostController.deleteComment);
 
 
 export default router;

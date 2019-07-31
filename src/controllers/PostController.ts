@@ -197,13 +197,6 @@ class PostController {
                 return res.status(404).send({err: `Comment not found with id: ${commentId}`});
             }
 
-            if (comment.user.id !== userId || comment.post.userId !== userId) {
-                return res.status(403).send();
-            }
-
-            comment.isDeleted = true;
-            await postCommentsRepository.save(comment);
-
             const commentDTO = plainToClass(CommentDTO, comment, {excludeExtraneousValues: true});
             return res.send(commentDTO);
 
@@ -213,19 +206,40 @@ class PostController {
     }
 
     static deleteComment = async (req: Request, res: Response) => {
+        const { userId } = res.locals.jwtPayload;
         const commentId: string = req.params.commentId;
+        const postId: string = req.params.id;
+
+        if (!postId) {
+            return res.status(400).send({err: 'postId is required'});
+        }
 
         if (!commentId) {
             return res.status(400).send({err: 'commentId is required'});
         }
 
         const postCommentsRepository = getRepository(PostComments);
+        const postRepository = getRepository(Post);
 
         try {
-            const comment = await postCommentsRepository.findOne({
-                where: {id: commentId},
-                relations: ['user', 'post'],
-            });
+
+            const post = await postRepository.findOne(postId);
+            if (!post) {
+                return res.status(404).send({err: `Post not found with id: ${postId}`});
+            }
+
+            const comment = await postCommentsRepository.findOne(commentId, {relations: ['user', 'post']});
+            if (!comment) {
+                return res.status(404).send({err: `Comment not found with id: ${commentId}`});
+            }
+
+            if (comment.user.id !== userId || comment.post.userId !== userId) {
+                return res.status(403).send();
+            }
+
+            comment.isDeleted = true;
+            await postCommentsRepository.save(comment);
+
             const commentDTO = plainToClass(CommentDTO, comment, {excludeExtraneousValues: true});
             return res.send(commentDTO);
 
