@@ -3,7 +3,7 @@ image: node:latest
 stages:
   - development
   
-development:
+deploy:
   type: deploy
   stage: development
   image: ruby:latest
@@ -11,7 +11,6 @@ development:
     - apt-get update -qy
     - apt-get install -y ruby-dev
     - gem install dpl
-    - npm install
     - dpl --provider=heroku --app=dev-gostivarapp --api-key=$DEV_HEROKU_API_KEY
   artifacts:
     paths:
