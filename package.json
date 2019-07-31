@@ -3,7 +3,7 @@
    "version": "0.0.1",
    "description": "Gostivar App API",
    "engines": {
-      "node": "10.14.12",
+      "node": "10.14.2",
       "npm": "6.1.0"
    },
    "devDependencies": {
