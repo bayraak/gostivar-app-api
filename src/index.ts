@@ -27,8 +27,10 @@ createConnection().then(async connection => {
         app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
     }
 
-    app.listen(process.env.PORT || 3000, () => {
-        console.log("Server started");
+    const port = process.env.PORT || 3000;
+
+    app.listen(port, () => {
+        console.log(`Server started on port ${port}`);
     });
 
 }).catch(error => console.log(error));
