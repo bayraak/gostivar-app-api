@@ -5,6 +5,7 @@ import * as bodyParser from "body-parser";
 import helmet from "helmet";
 import cors from "cors";
 import routes from "./routes";
+import './config/env';
 import swaggerUi from 'swagger-ui-express';
 import { options } from './config/swagger.config';
 import swaggerDocs from 'swagger-jsdoc';
