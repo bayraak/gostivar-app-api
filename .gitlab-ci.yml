@@ -1,0 +1,16 @@
+image: node:latest
+
+stages:
+  - development
+  
+development:
+  type: deploy
+  stage: development
+  image: ruby:latest
+  script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - dpl --provider=heroku --app=dev-gostivarapp --api-key=$DEV_HEROKU_API_KEY
+  only:
+    - master

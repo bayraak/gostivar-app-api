@@ -27,8 +27,8 @@ createConnection().then(async connection => {
         app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
     }
 
-    app.listen(3000, () => {
-        console.log("Server started on port 3000!");
+    app.listen(process.env.PORT || 3000, () => {
+        console.log("Server started");
     });
 
 }).catch(error => console.log(error));

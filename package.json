@@ -2,6 +2,10 @@
    "name": "GostivarApp",
    "version": "0.0.1",
    "description": "Gostivar App API",
+   "engines": {
+      "node": "10.14.12",
+      "npm": "6.1.0"
+   },
    "devDependencies": {
       "ts-node": "3.3.0",
       "@types/node": "^8.0.29",
@@ -42,7 +46,9 @@
    "scripts": {
       "tsc": "tsc",
       "start": "set debug=* && ts-node-dev --respawn --transpileOnly ./src/index.ts",
+      "postinstall": "npm run tsc",
       "prod": "tsc && node ./build/index.js",
+      "build": "node ./build/index.js",
       "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
       "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert"
    }
