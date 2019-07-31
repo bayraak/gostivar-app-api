@@ -5,6 +5,7 @@ stages:
   
 deploy:
   type: deploy
+  environment: development
   stage: development
   image: ruby:latest
   script:
