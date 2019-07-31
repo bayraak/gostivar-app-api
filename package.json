@@ -44,6 +44,7 @@
       "start": "set debug=* && ts-node-dev --respawn --transpileOnly ./src/index.ts",
       "prod": "tsc && node ./build/index.js",
       "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
-      "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert"
+      "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert",
+      "node:build": "node ./build/index.js"
    }
 }
