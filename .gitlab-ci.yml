@@ -6,13 +6,10 @@ stages:
 deploy:
   stage: deploy
   image: ruby:latest
-  environment:
-    name: development
-    url: https://dev-gostivarapp.herokuapp.com/
   script:
     - apt-get update -qy
     - apt-get install -y ruby-dev
     - gem install dpl
-    - dpl --provider=heroku --app=gostivarapp --api-key=$DEV_HEROKU_API_KEY
+    - dpl --provider=heroku --app=gostivarapp-dev --api-key=$DEV_HEROKU_API_KEY
   only:
     - master
