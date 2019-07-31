@@ -20,5 +20,17 @@ router.get("/:id/likes", [checkJwt, checkRole(["USER", "ADMIN"])], PostControlle
 //Toggle post like
 router.get("/:id/toggleLike", [checkJwt, checkRole(["USER", "ADMIN"])], PostController.toggleLike);
 
+//Create new comment
+router.post("/:id/comments", [checkJwt, checkRole(["USER", "ADMIN"])], PostController.createComment);
+
+//Get post comments
+router.get("/:id/comments", [checkJwt, checkRole(["USER", "ADMIN"])], PostController.getPostComments);
+
+//Get single comment
+router.get("/:id/comments/:commentId", [checkJwt, checkRole(["ADMIN"])], PostController.getCommentById);
+
+//Delete comment
+router.delete("/:id/comments/:commentId", [checkJwt, checkRole(["USER", "ADMIN"])], PostController.deleteComment);
+
 
 export default router;

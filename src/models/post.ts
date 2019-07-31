@@ -38,6 +38,7 @@ export class PostDTO {
     @Expose() isCommentsEnabled: boolean;
     @Expose() createdAt: Date;
     @Expose() updatedAt: Date;
+    @Expose() userId: number;
     @Expose() @Type(() => CategoryDTO) category: CategoryDTO;
     @Expose() @Type(() => UserDTO) user: UserDTO;
 

@@ -99,6 +99,117 @@ paths:
         500:
           description: Server error
 
+  /post/:id/comments:                
+    get:                 
+      tags:             
+        - Post            
+      summary: Get Post Comments
+      produces:
+      - application/json
+      parameters:         
+      - in: path          
+        name: id
+        description: Post ID
+        type: string
+        required: true
+      responses:          
+        200:
+          description: Return post comments
+          schema:
+            $ref: '#/definitions/CommentsDTOArray'
+        404:
+          description: Post not found
+        500:
+          description: Server error
+      
+    post:                 
+      tags:             
+        - Post            
+      summary: Create Comment
+      produces:
+      - application/json
+      parameters:         
+      - in: body          
+        name: Create Comment Request
+        description: Creates new comment
+        required: false   
+        schema:          
+          $ref: '#/definitions/CreateCommentRequest'
+      responses:          
+        200:
+          description: Returns newly created post
+          schema:
+            $ref: '#/definitions/CommentDTO'
+        400:
+          description: Content is required, PostId is required
+        403:
+          description: Comments are disabled for this pos
+        404:
+          description: Post not found
+        500:
+          description: Server error
+          
+  /post/:id/comments/:commentId:                
+    get:                 
+      tags:             
+        - Post            
+      summary: Get Single Comment
+      produces:
+      - application/json
+      parameters:         
+      - in: path          
+        name: id
+        description: Post ID
+        type: string
+        required: true
+      - in: path          
+        name: commentId
+        description: Comment ID
+        type: string
+        required: true
+      responses:          
+        200:
+          description: Return single comment
+          schema:
+            $ref: '#/definitions/CommentDTO'
+        400:
+          description: CommentId is required, PostId is required
+        404:
+          description: Post not found, Comment not found
+        500:
+          description: Server error
+          
+    delete:                 
+      tags:             
+        - Post            
+      summary: Delete Comment
+      produces:
+      - application/json
+      parameters:         
+      - in: path          
+        name: id
+        description: Post ID
+        type: string
+        required: true
+      - in: path          
+        name: commentId
+        description: Comment ID
+        type: string
+        required: true
+      responses:          
+        200:
+          description: Comment is deleted
+          schema:
+            $ref: '#/definitions/CommentDTO'
+        400:
+          description: CommentId is required, PostId is required
+        403:
+          description: Forbidden to delete comment
+        404:
+          description: Post not found, Comment not found
+        500:
+          description: Server error
+
 definitions:      
   CreatePostRequest:
     type: object
@@ -173,3 +284,32 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/LikesDTO'
+
+  CreateCommentRequest:
+    type: object
+    properties:
+      content:
+        type: string
+        
+  CommentDTO:
+    type: object
+    properties:
+      id: 
+        type: string
+      content:
+        type: string
+      isDeleted: 
+        type: boolean
+      createdAt:
+        type: string
+      updatedAt:
+        type: string
+      post:
+        $ref: '#/definitions/PostDTO'
+      user:
+        $ref: '#/definitions/UserDTO'
+        
+  CommentsDTOArray:
+    type: array
+    items:
+      $ref: '#/definitions/CommentDTO'
