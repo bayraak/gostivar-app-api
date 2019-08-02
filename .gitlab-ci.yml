@@ -8,6 +8,7 @@ deploy:
     - apt-get update -qy
     - apt-get install -y ruby-dev
     - gem install dpl
-    - dpl --provider=heroku --app=gostivarapp-dev --api-key=f099dca4-3b06-43b4-a998-03d2afdb0df8
+    - dpl --provider=heroku --app=gostivarapp --api-key=$DEV_HEROKU_API_KEY
+    - dpl --provider=heroku --app=gostivarapp-dev --api-key=$DEV_HEROKU_API_KEY
   only:
     - master
