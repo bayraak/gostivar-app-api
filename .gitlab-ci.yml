@@ -8,9 +8,8 @@ stages:
 deploy:
   type: deploy
   stage: development
-  before_script:
-    - npm install
   script:
+    - npm install
     - npm run build
   artifacts:
     paths:
