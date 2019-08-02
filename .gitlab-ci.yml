@@ -1,20 +1,14 @@
-image: node:latest
-
-cache:
-  paths:
-    - node_modules/
-    
-stages:
-  - development
-  
 deploy:
-  type: deploy
-  stage: development
+  stage: deploy
+  image: ruby:latest
+  environment:
+    name: development
+    url: https://dev-gostivarapp.herokuapp.com/
   script:
-    - npm install
-    - npm run prod
-  artifacts:
-    paths:
-      - build/
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - dpl --provider=heroku --app=gostivarapp --api-key=$DEV_HEROKU_API_KEY
+    - dpl --provider=heroku --app=gostivarapp-dev --api-key=$DEV_HEROKU_API_KEY
   only:
     - master
