@@ -8,7 +8,7 @@ const swaggerDefinition = {
             "name": "GostivarAppTeam"
         },
         "license": {
-            "name": "GostivarApp license 2019"
+            "name": "GostivarApp License 2019"
         }
     },
     "securityDefinitions": {
