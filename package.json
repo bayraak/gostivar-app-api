@@ -7,11 +7,12 @@
       "npm": "6.1.0"
    },
    "devDependencies": {
-      "ts-node": "3.3.0",
-      "@types/node": "^8.0.29",
-      "typescript": "3.3.3333"
+      
    },
    "dependencies": {
+      "ts-node": "3.3.0",
+      "@types/node": "^8.0.29",
+      "typescript": "3.3.3333",
       "@types/bcryptjs": "^2.4.2",
       "@types/body-parser": "^1.17.0",
       "@types/cors": "^2.8.5",
@@ -45,7 +46,8 @@
    },
    "scripts": {
       "tsc": "tsc",
-      "start": "set debug=* && ts-node-dev --respawn --transpileOnly ./src/index.ts",
+      "start": "npm run prod",
+      "start:dev": "set debug=* && ts-node-dev --respawn --transpileOnly ./src/index.ts",
       "postinstall": "npm run tsc",
       "prod": "tsc && node ./build/index.js",
       "build": "node ./build/index.js",
