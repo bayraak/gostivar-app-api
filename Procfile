@@ -1,1 +1,0 @@
-web: tsc --outDir build/ && node build/index.js
