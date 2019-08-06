@@ -45,8 +45,9 @@
    },
    "scripts": {
       "tsc": "tsc",
-      "start": "pm2-runtime start ecosystem.config.js --env production",
+      "start": "node ./build/index.js",
       "start:dev": "set debug=* && ts-node-dev --respawn --transpileOnly ./src/index.ts",
+      "postinstall": "npm run tsc",
       "prod": "tsc && node ./build/index.js",
       "build": "node ./build/index.js",
       "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
