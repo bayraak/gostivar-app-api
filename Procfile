@@ -1,1 +1,1 @@
-web: node ./build/index.js
+web: tsc --outDir build/ && node build/index.js
