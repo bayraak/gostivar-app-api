@@ -33,23 +33,21 @@
       "moment": "^2.24.0",
       "nodemailer": "^6.3.0",
       "pg": "^7.11.0",
-      "pm2": "^3.5.1",
       "reflect-metadata": "^0.1.13",
       "swagger-jsdoc": "^3.3.0",
       "swagger-ui-express": "^4.0.7",
-      "ts-node": "3.3.0",
       "ts-node-dev": "^1.0.0-pre.40",
       "typeorm": "0.2.18",
-      "typescript": "3.3.3333",
-      "winston": "^3.2.1"
+      "winston": "^3.2.1",
+      "ts-node": "3.3.0",
+      "typescript": "3.3.3333"
    },
+   "main": "build/index.js",
    "scripts": {
       "tsc": "tsc",
-      "start": "node ./build/index.js",
-      "start:dev": "set debug=* && ts-node-dev --respawn --transpileOnly ./src/index.ts",
+      "start": "set debug=* && ts-node-dev --respawn --transpileOnly ./src/index.ts",
       "postinstall": "npm run tsc",
       "prod": "tsc && node ./build/index.js",
-      "build": "node ./build/index.js",
       "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
       "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert",
       "node:build": "node ./build/index.js"
