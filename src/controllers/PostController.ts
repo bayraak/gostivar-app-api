@@ -68,7 +68,7 @@ class PostController {
     }
 
     static getPostById = async (req: Request, res: Response) => {
-        const postId: number = req.params.id;
+        const postId: number = +req.params.id;
         const { userId } = res.locals.jwtPayload;
         if (!postId) {
             return res.status(400).send({err: 'postId is required'});
@@ -96,7 +96,7 @@ class PostController {
     }
 
     static getPostLikes = async (req: Request, res: Response) => {
-        const postId: number = req.params.id;
+        const postId: number = +req.params.id;
 
         if (!postId) {
             return res.status(400).send({err: 'postId is required'});
