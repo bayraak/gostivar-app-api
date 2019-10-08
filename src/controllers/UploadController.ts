@@ -4,7 +4,26 @@ import { S3 } from 'aws-sdk';
 class UploadController {
 
     static uploadPostPhoto = async (req: Request, res: Response) => {
-        const file = req.files[0];
+        const files = req.files;
+        
+        if (files && files.length) {
+            const promises = [];
+            files.forEach(file => {
+                promises.push(UploadController.uploadFileToS3(file));
+            });
+
+            try {
+                const response = await Promise.all(promises);
+                return res.send(response.map(image => image.Location));
+            } catch(err) {
+                return res.send(err).status(500);
+            }
+        } else {
+            return res.send('No file found').status(500);
+        }
+    }
+
+    static uploadFileToS3 = async (file) => {
         const s3 = new S3();
         const params = {
             Bucket: process.env.AWS_S3_BUCKET,
@@ -13,20 +32,9 @@ class UploadController {
             ContentType: file.mimetype,
             ACL: "public-read"
         };
-        
-
-        s3.upload(params, function (err, data) {
-            //handle error
-            if (err) {
-              res.send(err).status(500);
-            }
-          
-            //success
-            if (data) {
-                res.send(data);
-            }
-          });
+        return s3.upload(params).promise();
     }
+
 }
 
 export default UploadController;

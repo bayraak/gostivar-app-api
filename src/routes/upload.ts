@@ -9,6 +9,6 @@ const postPhotoUpload = multer()
 const router = Router();
 
 //Upload photo
-router.post("/image", postPhotoUpload.array('photos', 10), [checkJwt, checkRole(["USER", "ADMIN"])], UploadController.uploadPostPhoto);
+router.post("/image", postPhotoUpload.array('files', 20), [checkJwt, checkRole(["USER", "ADMIN"])], UploadController.uploadPostPhoto);
 
 export default router;
