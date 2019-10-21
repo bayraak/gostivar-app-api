@@ -68,7 +68,6 @@ export class User {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    
     @ManyToOne(type => Role, role => role.users)
     role: Role;
 
