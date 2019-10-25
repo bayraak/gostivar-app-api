@@ -20,7 +20,7 @@ class CategoryController {
     };
 
     static getOneById = async (req: Request, res: Response) => {
-        const id: number = req.params.id;
+        const id: number = +req.params.id;
 
         const categoryRepository = getRepository(Category);
         try {

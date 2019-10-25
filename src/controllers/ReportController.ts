@@ -71,7 +71,7 @@ class ReportController {
     };
 
     static getOneById = async (req: Request, res: Response) => {
-        const reportId: number = req.params.id;
+        const reportId: number = +req.params.id;
 
         if (!reportId) {
             return res.status(400).send({err: 'reportId is required'});

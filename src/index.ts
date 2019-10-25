@@ -8,6 +8,7 @@ import routes from "./routes";
 import './config/env';
 import swaggerUi from 'swagger-ui-express';
 import { options } from './config/swagger.config';
+import './config/s3.config';
 import swaggerDocs from 'swagger-jsdoc';
 import expressWinston from 'express-winston';
 import { loggerOptions, errorLoggerOptions } from './config/winston';

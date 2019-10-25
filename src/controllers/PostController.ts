@@ -10,6 +10,7 @@ import { PostLikes } from "../entity/PostLike";
 import { LikeDTO } from "../models/likes";
 import { PostComments } from "../entity/PostComment";
 import { CreateCommentRequest, CommentDTO } from "../models/comments";
+import { PostImage } from "../entity/PostImage";
 
 class PostController {
 
@@ -22,6 +23,7 @@ class PostController {
                     .createQueryBuilder('post')
                     .leftJoinAndSelect('post.category', 'category')
                     .leftJoinAndSelect('post.user', 'user')
+                    .leftJoinAndSelect('post.images', 'image', `image.postId = post.id`)
                     .leftJoinAndSelect('post.likes', 'like', `like.userId = ${token.userId} and like.postId = post.id`)
                     .where('post.isDeleted = false')
                     .orderBy('post.createdAt', 'DESC')
@@ -39,6 +41,7 @@ class PostController {
         const categoryRepository = getRepository(Category);
         const userRepository = getRepository(User);
         const postRepository = getRepository(Post);
+        const postImageRepository = getRepository(PostImage);
 
         const body = req.body;
         const createPostRequest = plainToClass(CreatePostRequest, body, {excludeExtraneousValues: true});
@@ -56,8 +59,27 @@ class PostController {
         post.category = category;
         post.content = createPostRequest.content;
         post.isCommentsEnabled = createPostRequest.isCommentsEnabled;
+
         try {
             post = await postRepository.save(post);
+
+            if (createPostRequest.images.length) {
+                const images = createPostRequest.images.map(image => {
+                    const postImage: PostImage = new PostImage();
+                    postImage.url = image;
+                    postImage.post = post;
+                    postImage.postId = post.id;
+                    return postImage;
+                });
+                await postImageRepository
+                    .createQueryBuilder('post_image')
+                    .insert()
+                    .into(PostImage)
+                    .values(images)
+                    .execute();
+                post.images = images;
+            }
+
         } catch (err) {
             return res.status(500).send({err: 'Error Occured'});
         }
@@ -68,7 +90,7 @@ class PostController {
     }
 
     static getPostById = async (req: Request, res: Response) => {
-        const postId: number = req.params.id;
+        const postId: string = req.params.id;
         const { userId } = res.locals.jwtPayload;
         if (!postId) {
             return res.status(400).send({err: 'postId is required'});
@@ -80,6 +102,7 @@ class PostController {
                     .createQueryBuilder('post')
                     .leftJoinAndSelect('post.category', 'category')
                     .leftJoinAndSelect('post.user', 'user')
+                    .leftJoinAndSelect('post.images', 'image', `image.postId = post.id`)
                     .leftJoinAndSelect('post.likes', 'like', 'like.userId = :userId and like.postId = post.id', {userId})
                     .where('post.id = :postId', {postId})
                     .getOne();
@@ -96,7 +119,7 @@ class PostController {
     }
 
     static getPostLikes = async (req: Request, res: Response) => {
-        const postId: number = req.params.id;
+        const postId: string = req.params.id;
 
         if (!postId) {
             return res.status(400).send({err: 'postId is required'});

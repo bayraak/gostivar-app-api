@@ -12,6 +12,7 @@ import { Category } from "./Category";
 import { PostLikes } from "./PostLike";
 import { PostComments } from "./PostComment";
 import { PostReport } from "./PostReport";
+import { PostImage } from "./PostImage";
 
 @Entity()
 export class Post {
@@ -63,6 +64,9 @@ export class Post {
 
     @OneToMany(type => PostComments, postComment => postComment.post)
     comments!: PostComments[];
+
+    @OneToMany(type => PostImage, postImage => postImage.post)
+    images: PostImage[];
 
     @OneToMany(type => PostReport, postReport => postReport.post)
     reports!: PostReport[];
