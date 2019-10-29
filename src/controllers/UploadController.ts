@@ -4,7 +4,7 @@ import { S3 } from 'aws-sdk';
 class UploadController {
 
     static uploadPostPhoto = async (req: Request, res: Response) => {
-        const files = req.files;
+        const files = req['files'];
         
         if (files && files.length) {
             const promises = [];
