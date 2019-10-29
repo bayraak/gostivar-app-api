@@ -10,6 +10,7 @@ import {plainToClass} from "class-transformer";
 import { ResetPasswordToken } from "../entity/ResetPasswordToken";
 import PasswordGenerator from '../utils/passwordGenerator';
 import MailSender from '../utils/mailSender';
+import { publishToQueue } from '../utils/mqttService';
 import { Role } from "../entity/Role";
 class AuthController {
 
@@ -115,7 +116,11 @@ class AuthController {
         const resetPasswordRepository = getRepository(ResetPasswordToken);
         try {
             await resetPasswordRepository.save(resetPasswordToken);
-            await MailSender.sendResetPassword(user.email, token);
+            const payload = {
+                email: user.email,
+                link: token
+            };
+            await publishToQueue('RESET_PASSWORD', JSON.stringify(payload));
             return res.status(200).send();
         } catch (e) {
             console.log(e);
@@ -162,7 +167,11 @@ class AuthController {
 
                 try {
                     await userRepository.update(userId, {password: user.password});
-                    await MailSender.sendNewPassword(user.email, password);
+                    const payload = {
+                        email: user.email,
+                        password: password
+                    };
+                    await publishToQueue('FORGOT_PASSWORD', JSON.stringify(payload));
                     res.status(200).send();
                 } catch (err) {
                     return res.status(400).send({err: 'Error occurred'});
