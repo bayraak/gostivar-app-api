@@ -28,6 +28,8 @@ import { Router } from "express";
     UserController.deleteUser
   );
 
-  router.get("/:id/categories/", UserController.getAvailableCategoriesForUser);
+  router.get("/:id/categories/", [checkJwt], UserController.getAvailableCategoriesForPublish);
+
+  router.post("/my-notifications", [checkJwt], UserController.updateEnabledNotifications)
 
   export default router;

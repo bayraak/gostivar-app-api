@@ -80,7 +80,7 @@ class AuthController {
         user.hashPassword();
 
         try {
-            await userRepository.save(user);
+            await userRepository.insert(user);
         } catch (e) {
             return res.status(400).send({err: 'Error occurred.'});
         }

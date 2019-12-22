@@ -6,7 +6,9 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     OneToMany,
-    ManyToOne
+    ManyToOne,
+    OneToOne,
+    JoinColumn
 } from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
@@ -17,6 +19,7 @@ import { Post } from "./Post";
 import { PostLikes } from "./PostLike";
 import { PostComments } from "./PostComment";
 import { PostReport } from "./PostReport";
+import { ProfileSettings } from "./ProfileSettings";
 
 @Entity()
 @Unique(["username"])
@@ -59,6 +62,10 @@ export class User {
 
     @OneToMany(type => PostReport, postReport => postReport.user)
     reports!: PostReport[];
+
+    @OneToOne(type => ProfileSettings, profileSettings => profileSettings.user, {cascade: true, onDelete: 'CASCADE'})
+    @JoinColumn() // Adds foreign key profileSettingsId to User.
+    profileSettings!: ProfileSettings;
 
     @Column()
     @CreateDateColumn()
