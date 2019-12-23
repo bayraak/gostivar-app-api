@@ -1,11 +1,13 @@
 import { Request, Response } from "express";
-import { getRepository } from "typeorm";
+import { getRepository, getConnection, UpdateResult } from "typeorm";
 import { validate } from "class-validator";
 
 import { User } from "../entity/User";
 import { plainToClass } from "class-transformer";
 import { Role } from "../entity/Role";
 import { RoleToCategory } from "../entity/RoleToCategory";
+import { ProfileSettings } from "../entity/ProfileSettings";
+import { AvailableLanguages } from "../models/profile";
 
 class UserController {
 
@@ -22,14 +24,20 @@ class UserController {
         //Get the ID from the url
         const id: number = +req.params.id;
 
+        const { role, userId } = res.locals.jwtPayload;
+
+        if (id !== userId && role !== 'ADMIN') {
+            return res.status(403).send("User does not have permission to get another users info");
+        }
+
         //Get the user from database
         const userRepository = getRepository(User);
         try {
-            const user = await userRepository.findOneOrFail(id, { relations: ["role"] });
+            const user = await userRepository.findOneOrFail(id, { relations: ["role", "profileSettings"] });
             const userDTO = plainToClass(User, user);
             return res.send(userDTO);
         } catch (error) {
-            res.status(404).send("User not found");
+            res.status(404).send({ message: "User not found", details: error });
         }
     };
 
@@ -143,7 +151,7 @@ class UserController {
         res.status(204).send();
     };
 
-    static getAvailableCategoriesForUser = async (req: Request, res: Response) => {
+    static getAvailableCategoriesForPublish = async (req: Request, res: Response) => {
         const id: number = +req.params.id;
         const userRepository = getRepository(User);
         const roleToCategoryRepository = getRepository(RoleToCategory);
@@ -157,6 +165,83 @@ class UserController {
         }
         return res.status(200).send(categories);
     };
+
+    static updateEnabledNotifications = async (req: Request, res: Response) => {
+        const { userId } = res.locals.jwtPayload;
+
+        const notifications: { id: number, name: string }[] = req.body;
+
+        if (!notifications.length) {
+            return res.status(400).send('Notifications should be sent as array id and name pair');
+        }
+
+        try {
+            const userRepository = getRepository(User);
+            const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ['profileSettings'] });
+
+            const updateResult: UpdateResult = await getConnection()
+                .createQueryBuilder()
+                .update(ProfileSettings)
+                .set({ enabledCategoryNotifications: notifications })
+                .where("id = :id", { id: user.profileSettings.id })
+                .execute();
+
+            // affected is for affected column numbers
+            if (updateResult.affected && updateResult.affected > 0) {
+                return res.status(202).send();
+            }
+
+            return res.status(400).send('No change is made in profile settings');
+        }
+        catch (err) {
+            return res.status(400).send({ message: 'Error occured', details: err });
+        }
+    };
+
+    static updateProfileSettings = async (req: Request, res: Response) => {
+        try {
+            const {
+                preferedLanguage,
+                profileDisplayAs
+            } = req.body;
+
+            if (!preferedLanguage || !profileDisplayAs) {
+                return res.status(400).send('Model validation error');
+            }
+
+            const { userId, role } = res.locals.jwtPayload;
+            const id: number = +req.params.id;
+
+            if (id !== userId && role !== 'ADMIN') {
+                return res.status(403).send("User does not have permission to update another users info");
+            }
+
+            const userRepository = getRepository(User);
+
+            const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ['profileSettings'] });
+
+            const updateResult: UpdateResult = await getConnection()
+                .createQueryBuilder()
+                .update(ProfileSettings)
+                .set({
+                    preferedLanguage: preferedLanguage,
+                    profileDisplayAs: profileDisplayAs
+                })
+                .where("id = :id", { id: user.profileSettings.id })
+                .execute();
+
+            // affected is for affected column numbers
+            // should return 2 for 2 updated columns
+            if (updateResult.affected && updateResult.affected > 0) {
+                return res.status(202).send();
+            }
+
+            return res.status(400).send('No change is made in profile settings');
+        }
+        catch (err) {
+            return res.status(400).send({ message: 'Error occurred', details: err })
+        }
+    }
 };
 
 export default UserController;
