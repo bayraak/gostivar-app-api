@@ -7,6 +7,7 @@ import { plainToClass } from "class-transformer";
 import { Role } from "../entity/Role";
 import { RoleToCategory } from "../entity/RoleToCategory";
 import { ProfileSettings } from "../entity/ProfileSettings";
+import { AvailableLanguages } from "../models/profile";
 
 class UserController {
 
@@ -194,6 +195,51 @@ class UserController {
         }
         catch (err) {
             return res.status(400).send({ message: 'Error occured', details: err });
+        }
+    };
+
+    static updateProfileSettings = async (req: Request, res: Response) => {
+        try {
+            const {
+                preferedLanguage,
+                profileDisplayAs
+            } = req.body;
+
+            if (!preferedLanguage || !profileDisplayAs) {
+                return res.status(400).send('Model validation error');
+            }
+
+            const { userId, role } = res.locals.jwtPayload;
+            const id: number = +req.params.id;
+
+            if (id !== userId && role !== 'ADMIN') {
+                return res.status(403).send("User does not have permission to update another users info");
+            }
+
+            const userRepository = getRepository(User);
+
+            const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ['profileSettings'] });
+
+            const updateResult: UpdateResult = await getConnection()
+                .createQueryBuilder()
+                .update(ProfileSettings)
+                .set({
+                    preferedLanguage: preferedLanguage,
+                    profileDisplayAs: profileDisplayAs
+                })
+                .where("id = :id", { id: user.profileSettings.id })
+                .execute();
+
+            // affected is for affected column numbers
+            // should return 2 for 2 updated columns
+            if (updateResult.affected && updateResult.affected > 0) {
+                return res.status(202).send();
+            }
+
+            return res.status(400).send('No change is made in profile settings');
+        }
+        catch (err) {
+            return res.status(400).send({ message: 'Error occurred', details: err })
         }
     }
 };

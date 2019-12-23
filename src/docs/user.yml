@@ -123,6 +123,25 @@ paths:
           description: Returns accepted if everything goes okay
         400:
           description: If something went wrong
+  /user/{id}/profile-settings:
+    put:
+      tags:
+        - User
+      summary: Update user profile settings
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: updateProfileSettingsDto
+          description: /user/{id}/profile-settings/
+          required: false
+          schema:
+            $ref: "#/definitions/updateProfileSettingsDto"
+      responses:
+        202:
+          description: Updates user profile settings
+        400:
+          description: Model validation error
 definitions:
   createUserDto:
     type: object
@@ -148,8 +167,17 @@ definitions:
         type: string
   setNotificationsDto:
     type: array
+    items:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+  updateProfileSettingsDto:
+    type: object
     properties:
-      id:
-        type: number
-      name:
+      preferedLanguage:
+        type: string
+      profileDisplayAs:
         type: string
