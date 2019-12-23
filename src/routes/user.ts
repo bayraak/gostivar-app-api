@@ -32,7 +32,7 @@ import { Router } from "express";
 
   router.post("/my-notifications", [checkJwt], UserController.updateEnabledNotifications);
 
-  router.put("/:id/profile-settings/", [checkJwt], UserController.updateProfileSettings);
+  router.put("/:id/profile-preferences/", [checkJwt], UserController.updateProfilePreferences);
 
 
   export default router;

@@ -1,6 +1,6 @@
 import { User } from "../entity/User";
 import { EventSubscriber, EntitySubscriberInterface, InsertEvent } from "typeorm";
-import { ProfileSettings } from "../entity/ProfileSettings";
+import { ProfilePreferences } from "../entity/ProfilePreferences";
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface<User> {
@@ -10,11 +10,11 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     }
 
     async afterInsert(event: InsertEvent<User>) {
-        const profile = new ProfileSettings();
+        const profile = new ProfilePreferences();
         profile.user = event.entity;
 
         await event.manager
-            .getRepository(ProfileSettings)
+            .getRepository(ProfilePreferences)
             .save(profile);
     }
 }
