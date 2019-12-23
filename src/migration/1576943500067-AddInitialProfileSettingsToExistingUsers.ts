@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner, getRepository, getConnection, InsertResult } from "typeorm";
-import { ProfileSettings } from "../entity/ProfileSettings";
+import { ProfilePreferences } from "../entity/ProfilePreferences";
 import { User } from "../entity/User";
 import { ProfileDisplayAs, AvailableLanguages } from "../models/profile";
 import { Category } from "../entity/Category";
@@ -7,7 +7,7 @@ import { Category } from "../entity/Category";
 export class AddInitialProfileSettingsToExistingUsers1576943500067 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<any> {
-        const profileSettingsRepository = getRepository(ProfileSettings);
+        const profilePreferencesRepository = getRepository(ProfilePreferences);
         const categoryRepository = getRepository(Category);
         const userRepository = getRepository(User);
 
@@ -26,22 +26,22 @@ export class AddInitialProfileSettingsToExistingUsers1576943500067 implements Mi
         });
 
         // create an object as default profile settings for all users
-        const profileSettings = {
+        const profilePreferences = {
             preferedLanguage: AvailableLanguages.ENGLISH,
             enabledCategoryNotifications: asNotifications,
             profilePictureUrl: 'https://example.com/any-link-to-default-profile-pic.jpg',
             profileDisplayAs: ProfileDisplayAs.NAME_SURNAME
         }
 
-        // create an array with length as many as users. Fill that array with the same profileSettings object
-        const profileSettingsArray = Array(allCategories.length).fill(profileSettings);
+        // create an array with length as many as users. Fill that array with the same profilePreferences object
+        const profilePreferencesArray = Array(allCategories.length).fill(profilePreferences);
 
-        // save the profileSettingsArray to database in ProfileSettings table and get the created id's
-        const insertResult: InsertResult = await profileSettingsRepository.insert(profileSettingsArray)
+        // save the profileSettingsArray to database in ProfilePreferences table and get the created id's
+        const insertResult: InsertResult = await profilePreferencesRepository.insert(profilePreferencesArray);
 
         // Assing all the created Id's to the allUser entities.
         for (let i = 0; i < allUsers.length; i++) {
-            allUsers[i].profileSettings = insertResult.identifiers[i]['id'];
+            allUsers[i].profilePreferences = insertResult.identifiers[i]['id'];
         }
 
         // Save all the user entities again to database.
@@ -57,18 +57,18 @@ export class AddInitialProfileSettingsToExistingUsers1576943500067 implements Mi
         await getConnection()
             .createQueryBuilder()
             .update(User)
-            .set({ profileSettings: null })
+            .set({ profilePreferences: null })
             .execute();
 
         // Then delete all ProfileSetttings data
         await getConnection()
             .createQueryBuilder()
             .delete()
-            .from(ProfileSettings)
+            .from(ProfilePreferences)
             .execute();
         
         // The order of execution must be as it is now.
-        // If you try to first delete the ProfileSettings entities
+        // If you try to first delete the ProfilePreferences entities
         // you'll get an error that it has a reference in User table
     }
 

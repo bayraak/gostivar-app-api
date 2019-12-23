@@ -6,8 +6,7 @@ import { User } from "../entity/User";
 import { plainToClass } from "class-transformer";
 import { Role } from "../entity/Role";
 import { RoleToCategory } from "../entity/RoleToCategory";
-import { ProfileSettings } from "../entity/ProfileSettings";
-import { AvailableLanguages } from "../models/profile";
+import { ProfilePreferences } from "../entity/ProfilePreferences";
 
 class UserController {
 
@@ -33,7 +32,7 @@ class UserController {
         //Get the user from database
         const userRepository = getRepository(User);
         try {
-            const user = await userRepository.findOneOrFail(id, { relations: ["role", "profileSettings"] });
+            const user = await userRepository.findOneOrFail(id, { relations: ["role", "profilePreferences"] });
             const userDTO = plainToClass(User, user);
             return res.send(userDTO);
         } catch (error) {
@@ -177,13 +176,13 @@ class UserController {
 
         try {
             const userRepository = getRepository(User);
-            const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ['profileSettings'] });
+            const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ['profilePreferences'] });
 
             const updateResult: UpdateResult = await getConnection()
                 .createQueryBuilder()
-                .update(ProfileSettings)
+                .update(ProfilePreferences)
                 .set({ enabledCategoryNotifications: notifications })
-                .where("id = :id", { id: user.profileSettings.id })
+                .where("id = :id", { id: user.profilePreferences.id })
                 .execute();
 
             // affected is for affected column numbers
@@ -198,7 +197,7 @@ class UserController {
         }
     };
 
-    static updateProfileSettings = async (req: Request, res: Response) => {
+    static updateProfilePreferences = async (req: Request, res: Response) => {
         try {
             const {
                 preferedLanguage,
@@ -218,16 +217,16 @@ class UserController {
 
             const userRepository = getRepository(User);
 
-            const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ['profileSettings'] });
+            const user = await userRepository.findOneOrFail({ where: { id: userId }, relations: ['profilePreferences'] });
 
             const updateResult: UpdateResult = await getConnection()
                 .createQueryBuilder()
-                .update(ProfileSettings)
+                .update(ProfilePreferences)
                 .set({
                     preferedLanguage: preferedLanguage,
                     profileDisplayAs: profileDisplayAs
                 })
-                .where("id = :id", { id: user.profileSettings.id })
+                .where("id = :id", { id: user.profilePreferences.id })
                 .execute();
 
             // affected is for affected column numbers
@@ -238,8 +237,8 @@ class UserController {
 
             return res.status(400).send('No change is made in profile settings');
         }
-        catch (err) {
-            return res.status(400).send({ message: 'Error occurred', details: err })
+        catch (error) {
+            return res.status(400).send({ message: 'Error occurred', details: error })
         }
     }
 };

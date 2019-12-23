@@ -2,19 +2,14 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    Unique,
-    CreateDateColumn,
-    UpdateDateColumn,
-    OneToMany,
-    ManyToOne,
     OneToOne
 } from "typeorm";
-import { Length, IsNotEmpty } from "class-validator";
+import { Length } from "class-validator";
 import { User } from "./User";
 import { ProfileDisplayAs, AvailableLanguages } from "../models/profile";
 
 @Entity()
-export class ProfileSettings {
+export class ProfilePreferences {
 
     constructor() {
         this.preferedLanguage = AvailableLanguages.ENGLISH;
@@ -41,6 +36,6 @@ export class ProfileSettings {
     @Length(2, 64)
     profileDisplayAs: ProfileDisplayAs;
 
-    @OneToOne(type => User, user => user.profileSettings)
+    @OneToOne(type => User, user => user.profilePreferences)
     user!: User;
 }
