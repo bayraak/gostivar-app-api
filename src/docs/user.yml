@@ -1,112 +1,129 @@
 paths:
-  /user/:                
-    get:                 
-      tags:             
-        - User        
+  /user/:
+    get:
+      tags:
+        - User
       summary: Get all users
       produces:
-      - application/json
-      responses:         
+        - application/json
+      responses:
         200:
           description: Returns list of UserDto
-    post:                 
-      tags:               
-        - User           
+    post:
+      tags:
+        - User
       summary: Creates a new user
       produces:
-      - application/json
-      parameters:         
-      - in: body          
-        name: sign up    
-        description: It enables a user to create an account
-        required: false   
-        schema:          
-          $ref: '#/definitions/createUserDto' 
-      responses:          
+        - application/json
+      parameters:
+        - in: body
+          name: sign up
+          description: It enables a user to create an account
+          required: false
+          schema:
+            $ref: "#/definitions/createUserDto"
+      responses:
         201:
-          description: An object with user details        
+          description: An object with user details
         400:
-          description: Validation errors        
+          description: Validation errors
         409:
-          description: The username is already in use        
-    
-  /user/{id}:          
-    get:                
-      tags:            
-        - User            
+          description: The username is already in use
+  /user/{id}:
+    get:
+      tags:
+        - User
       summary: Get user by given userId
       produces:
-      - application/json
-      parameters:        
-      - in: path          
-        name: id
-        type: integer
-        required: true
-      responses:          
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+      responses:
         200:
           description: Returns UserDto by given userId
         404:
           description: User not found by given userId
-    patch:                
-      tags:            
-        - User            
+    patch:
+      tags:
+        - User
       summary: Edit one user
       produces:
-      - application/json
-      parameters:     
-      - name: id
-        in: path
-        required: true
-        type: string
-      - name: model
-        in: body
-        required: false
-        schema:
-          "$ref": "#/definitions/editUserDto"
-      responses:          
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+        - name: model
+          in: body
+          required: false
+          schema:
+            "$ref": "#/definitions/editUserDto"
+      responses:
         204:
           description: No content, but accepted response
         400:
-          description: Validation errors        
+          description: Validation errors
         404:
-          description: User not found by given userId     
+          description: User not found by given userId
         409:
-          description: The username is already in use 
-    delete:                
-      tags:            
-        - User            
+          description: The username is already in use
+    delete:
+      tags:
+        - User
       summary: Delete one user
       produces:
-      - application/json
-      parameters:        
-      - in: path          
-        name: id
-        type: integer
-        required: true
-      responses:          
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+      responses:
         204:
           description: No content, but accepted response
         404:
           description: User not found by given userId
-  /user/{id}/categories:          
-    get:                
-      tags:            
-        - User            
+  /user/{id}/categories:
+    get:
+      tags:
+        - User
       summary: Get available categories for user
       produces:
-      - application/json
-      parameters:        
-      - in: path          
-        name: id
-        type: integer
-        required: true
-      responses:          
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          type: integer
+          required: true
+      responses:
         200:
           description: Returns Categories by given userId
         404:
-          description: Category not found by given userId     
-
-definitions:      
+          description: Category not found by given userId
+  /user/my-notifications:
+    post:
+      tags:
+        - User
+      summary: Set enabled categories for user
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: setNotificationsDto
+          description: /user/my-notifications
+          required: false
+          schema:
+            $ref: "#/definitions/setNotificationsDto"
+      responses:
+        202:
+          description: Returns accepted if everything goes okay
+        400:
+          description: If something went wrong
+definitions:
   createUserDto:
     type: object
     properties:
@@ -128,4 +145,11 @@ definitions:
       username:
         type: string
       role:
+        type: string
+  setNotificationsDto:
+    type: array
+    properties:
+      id:
+        type: number
+      name:
         type: string
