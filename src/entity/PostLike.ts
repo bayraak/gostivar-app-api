@@ -1,9 +1,9 @@
-import { ManyToOne, Entity, PrimaryColumn, Column, CreateDateColumn } from "typeorm";
+import { ManyToOne, Entity, PrimaryColumn, Column, CreateDateColumn, BaseEntity } from "typeorm";
 import { User } from "./User";
 import { Post } from "./Post";
 
 @Entity()
-export class PostLikes {
+export class PostLikes extends BaseEntity {
     @PrimaryColumn() 
     postId: string;
 

@@ -2,16 +2,19 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    OneToOne
+    OneToOne,
+    BaseEntity
 } from "typeorm";
 import { Length } from "class-validator";
 import { User } from "./User";
 import { ProfileDisplayAs, AvailableLanguages } from "../models/profile";
 
 @Entity()
-export class ProfilePreferences {
+export class ProfilePreferences extends BaseEntity {
 
     constructor() {
+        super();
+        
         this.preferedLanguage = AvailableLanguages.ENGLISH;
         this.profileDisplayAs = ProfileDisplayAs.NAME_SURNAME;
         this.profilePictureUrl = "";

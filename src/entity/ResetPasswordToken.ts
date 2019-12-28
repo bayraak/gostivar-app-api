@@ -4,7 +4,8 @@ import {
     Column,
     CreateDateColumn,
     UpdateDateColumn,
-    ManyToOne
+    ManyToOne,
+    BaseEntity
 } from "typeorm";
 import { User } from "./User";
 
@@ -14,7 +15,7 @@ export enum TokenStatus {
 }
 
 @Entity()
-export class ResetPasswordToken {
+export class ResetPasswordToken extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

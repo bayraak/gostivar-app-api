@@ -8,7 +8,8 @@ import {
     OneToMany,
     ManyToOne,
     OneToOne,
-    JoinColumn
+    JoinColumn,
+    BaseEntity
 } from "typeorm";
 import { Length, IsNotEmpty } from "class-validator";
 import * as bcrypt from "bcryptjs";
@@ -23,7 +24,7 @@ import { ProfilePreferences } from "./ProfilePreferences";
 
 @Entity()
 @Unique(["username"])
-export class User {
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

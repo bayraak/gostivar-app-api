@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Unique } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Unique, BaseEntity } from "typeorm";
 import { Length } from "class-validator";
 import { RoleToCategory } from "./RoleToCategory";
 import { Post } from "./Post";
@@ -6,7 +6,7 @@ import { Post } from "./Post";
 
 @Entity()
 @Unique(["name"])
-export class Category {
+export class Category  extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

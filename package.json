@@ -21,6 +21,9 @@
       "@types/swagger-jsdoc": "0.0.2",
       "@types/swagger-ui-express": "^3.0.1",
       "@types/winston": "^2.4.4",
+      "admin-bro": "^1.5.2",
+      "admin-bro-expressjs": "^0.4.0",
+      "admin-bro-typeorm": "^0.1.6-alpha.3",
       "amqplib": "^0.5.5",
       "aws-sdk": "^2.590.0",
       "bcryptjs": "^2.4.3",
@@ -30,6 +33,8 @@
       "cors": "^2.8.5",
       "dotenv": "^8.2.0",
       "express": "^4.17.1",
+      "express-formidable": "^1.2.0",
+      "express-session": "^1.17.0",
       "express-winston": "^3.2.1",
       "helmet": "^3.19.0",
       "jsonwebtoken": "^8.5.1",
@@ -54,6 +59,8 @@
       "prod": "tsc && node ./build/index.js",
       "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
       "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert",
-      "node:build": "node ./build/index.js"
+      "node:build": "node ./build/index.js",
+      "admin:dev": "set debug=error && ts-node-dev --respawn --transpileOnly ./src/admin/index.ts",
+      "admin:prod": "set debug=error && tsc && node ./build/admin/index.js"
    }
 }

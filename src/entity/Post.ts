@@ -6,6 +6,7 @@ import {
     UpdateDateColumn,
     ManyToOne,
     OneToMany,
+    BaseEntity,
 } from "typeorm";
 import { User } from "./User";
 import { Category } from "./Category";
@@ -15,7 +16,7 @@ import { PostReport } from "./PostReport";
 import { PostImage } from "./PostImage";
 
 @Entity()
-export class Post {
+export class Post extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 

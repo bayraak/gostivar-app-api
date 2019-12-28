@@ -2,13 +2,14 @@ import {
     Entity,
     PrimaryGeneratedColumn,
     Column,
-    OneToMany
+    OneToMany,
+    BaseEntity
 } from "typeorm";
 import { User } from "./User";
 import { RoleToCategory } from "./RoleToCategory";
 
 @Entity()
-export class Role {
+export class Role extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
